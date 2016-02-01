@@ -59,15 +59,6 @@ static NSString *mainCell = @"mainCellmainCell";
     return _controllers;
 }
 
--(instancetype)initWithTitles:(NSMutableArray *)titlesArray{
-    if (self == [super init]) {
-        self.itemsArray = titlesArray;
-        [self addCollectionPage];
-        [self addCollectionMain];
-    }
-    return self;
-}
-
 -(instancetype) initWithTitles:(NSArray *)titlesArray controllersClass:(NSArray *)controllersClass onNavigationBar:(BOOL)onNavigationBar{
     if (self == [super init]) {
         self.onNavigationBar = onNavigationBar;
