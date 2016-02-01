@@ -11,14 +11,14 @@
 
 ####集成方法:
 
-######你只需要在需要加载分页控制器的前一页做像下面这种操作:
+//你只需要在需要加载分页控制器的前一页做像下面这种操作:
 
 ```Object-C
 XXPageController *pageVc = [[XXPageController alloc] initWithTitles:@[@"QQ",@"旺旺",@"微信",@"腾讯",@"阿里",@"天猫",@"淘宝",@"大姨妈"] controllersClass:@[[PageCell2Controller class],[PageCell2Controller class],[PageCell2Controller class],[PageCell2Controller class],[PageCell2Controller class],[PageCell2Controller class],[PageCell2Controller class],[PageCell2Controller class]] onNavigationBar:YES];
 [self.navigationController pushViewController:pageVc animated:YES];
 ```
 
-######几种不同方式展示的所有代码都在 demo 里的 `Viewcontroller` 类`didSelectRowAtIndexPath:`方法内:
+//几种不同方式展示的所有代码都在 demo 里的 `Viewcontroller` 类`didSelectRowAtIndexPath:`方法内:
 
 ```Object-C
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
