@@ -13,6 +13,12 @@
 		C4F8F6FF1C5F41270030181A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C4F8F6FD1C5F41270030181A /* Main.storyboard */; };
 		C4F8F7011C5F41270030181A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C4F8F7001C5F41270030181A /* Assets.xcassets */; };
 		C4F8F7041C5F41270030181A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C4F8F7021C5F41270030181A /* LaunchScreen.storyboard */; };
+		C4F8F7141C5F41E70030181A /* ItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C4F8F70D1C5F41E70030181A /* ItemCell.m */; };
+		C4F8F7151C5F41E70030181A /* MainCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C4F8F70F1C5F41E70030181A /* MainCell.m */; };
+		C4F8F7161C5F41E70030181A /* PopEnabeldCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = C4F8F7111C5F41E70030181A /* PopEnabeldCollectionView.m */; };
+		C4F8F7171C5F41E70030181A /* XXPageController.m in Sources */ = {isa = PBXBuildFile; fileRef = C4F8F7131C5F41E70030181A /* XXPageController.m */; };
+		C4F8F71D1C5F41FC0030181A /* PageCell1Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = C4F8F71A1C5F41FC0030181A /* PageCell1Controller.m */; };
+		C4F8F71E1C5F41FC0030181A /* PageCell2Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = C4F8F71C1C5F41FC0030181A /* PageCell2Controller.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +32,18 @@
 		C4F8F7001C5F41270030181A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C4F8F7031C5F41270030181A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C4F8F7051C5F41270030181A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C4F8F70C1C5F41E70030181A /* ItemCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemCell.h; sourceTree = "<group>"; };
+		C4F8F70D1C5F41E70030181A /* ItemCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItemCell.m; sourceTree = "<group>"; };
+		C4F8F70E1C5F41E70030181A /* MainCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainCell.h; sourceTree = "<group>"; };
+		C4F8F70F1C5F41E70030181A /* MainCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainCell.m; sourceTree = "<group>"; };
+		C4F8F7101C5F41E70030181A /* PopEnabeldCollectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopEnabeldCollectionView.h; sourceTree = "<group>"; };
+		C4F8F7111C5F41E70030181A /* PopEnabeldCollectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopEnabeldCollectionView.m; sourceTree = "<group>"; };
+		C4F8F7121C5F41E70030181A /* XXPageController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XXPageController.h; sourceTree = "<group>"; };
+		C4F8F7131C5F41E70030181A /* XXPageController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XXPageController.m; sourceTree = "<group>"; };
+		C4F8F7191C5F41FC0030181A /* PageCell1Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageCell1Controller.h; sourceTree = "<group>"; };
+		C4F8F71A1C5F41FC0030181A /* PageCell1Controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PageCell1Controller.m; sourceTree = "<group>"; };
+		C4F8F71B1C5F41FC0030181A /* PageCell2Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageCell2Controller.h; sourceTree = "<group>"; };
+		C4F8F71C1C5F41FC0030181A /* PageCell2Controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PageCell2Controller.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,14 +76,12 @@
 		C4F8F6F31C5F41270030181A /* XXPageController */ = {
 			isa = PBXGroup;
 			children = (
+				C4F8F70B1C5F41E70030181A /* XXPageCreater */,
+				C4F8F7181C5F41FC0030181A /* ExampleController */,
 				C4F8F6F71C5F41270030181A /* AppDelegate.h */,
 				C4F8F6F81C5F41270030181A /* AppDelegate.m */,
 				C4F8F6FA1C5F41270030181A /* ViewController.h */,
 				C4F8F6FB1C5F41270030181A /* ViewController.m */,
-				C4F8F6FD1C5F41270030181A /* Main.storyboard */,
-				C4F8F7001C5F41270030181A /* Assets.xcassets */,
-				C4F8F7021C5F41270030181A /* LaunchScreen.storyboard */,
-				C4F8F7051C5F41270030181A /* Info.plist */,
 				C4F8F6F41C5F41270030181A /* Supporting Files */,
 			);
 			path = XXPageController;
@@ -74,9 +90,39 @@
 		C4F8F6F41C5F41270030181A /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				C4F8F6FD1C5F41270030181A /* Main.storyboard */,
+				C4F8F7001C5F41270030181A /* Assets.xcassets */,
+				C4F8F7021C5F41270030181A /* LaunchScreen.storyboard */,
+				C4F8F7051C5F41270030181A /* Info.plist */,
 				C4F8F6F51C5F41270030181A /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		C4F8F70B1C5F41E70030181A /* XXPageCreater */ = {
+			isa = PBXGroup;
+			children = (
+				C4F8F70C1C5F41E70030181A /* ItemCell.h */,
+				C4F8F70D1C5F41E70030181A /* ItemCell.m */,
+				C4F8F70E1C5F41E70030181A /* MainCell.h */,
+				C4F8F70F1C5F41E70030181A /* MainCell.m */,
+				C4F8F7101C5F41E70030181A /* PopEnabeldCollectionView.h */,
+				C4F8F7111C5F41E70030181A /* PopEnabeldCollectionView.m */,
+				C4F8F7121C5F41E70030181A /* XXPageController.h */,
+				C4F8F7131C5F41E70030181A /* XXPageController.m */,
+			);
+			path = XXPageCreater;
+			sourceTree = "<group>";
+		};
+		C4F8F7181C5F41FC0030181A /* ExampleController */ = {
+			isa = PBXGroup;
+			children = (
+				C4F8F7191C5F41FC0030181A /* PageCell1Controller.h */,
+				C4F8F71A1C5F41FC0030181A /* PageCell1Controller.m */,
+				C4F8F71B1C5F41FC0030181A /* PageCell2Controller.h */,
+				C4F8F71C1C5F41FC0030181A /* PageCell2Controller.m */,
+			);
+			path = ExampleController;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -149,8 +195,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C4F8F71E1C5F41FC0030181A /* PageCell2Controller.m in Sources */,
+				C4F8F7151C5F41E70030181A /* MainCell.m in Sources */,
+				C4F8F7171C5F41E70030181A /* XXPageController.m in Sources */,
+				C4F8F71D1C5F41FC0030181A /* PageCell1Controller.m in Sources */,
+				C4F8F7141C5F41E70030181A /* ItemCell.m in Sources */,
 				C4F8F6FC1C5F41270030181A /* ViewController.m in Sources */,
 				C4F8F6F91C5F41270030181A /* AppDelegate.m in Sources */,
+				C4F8F7161C5F41E70030181A /* PopEnabeldCollectionView.m in Sources */,
 				C4F8F6F61C5F41270030181A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -262,6 +314,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = XXPageController/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pogolive.XXPageController;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -273,6 +326,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = XXPageController/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pogolive.XXPageController;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -298,6 +352,7 @@
 				C4F8F70A1C5F41270030181A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
