@@ -11,7 +11,9 @@
 
 ####集成方法:
 
-//你只需要在需要加载分页控制器的前一页做像下面这种操作:
+1.将工程内`XXPageCreater`文件夹手动拖入您的项目并且引入头文件` #import "XXPageController.h" `;
+
+2.你只需要在需要加载分页控制器的前一页做像下面这种操作:
 
 ```Object-C
 XXPageController *pageVc = [[XXPageController alloc] initWithTitles:@[@"QQ",@"旺旺",@"微信",@"腾讯",@"阿里",@"天猫",@"淘宝",@"大姨妈"] controllersClass:@[[PageCell2Controller class],[PageCell2Controller class],[PageCell2Controller class],[PageCell2Controller class],[PageCell2Controller class],[PageCell2Controller class],[PageCell2Controller class],[PageCell2Controller class]] onNavigationBar:YES];
