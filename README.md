@@ -20,7 +20,7 @@ XXPageController *pageVc = [[XXPageController alloc] initWithTitles:@[@"QQ",@"�
 [self.navigationController pushViewController:pageVc animated:YES];
 ```
 
-//几种不同方式展示的所有代码都在 demo 里的 `Viewcontroller` 类`didSelectRowAtIndexPath:`方法内:
+#####PS:几种不同方式展示的所有代码都在 demo 里的 `Viewcontroller` 类`didSelectRowAtIndexPath:`方法内:
 
 ```Object-C
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -49,3 +49,4 @@ XXPageController *pageVc = [[XXPageController alloc] initWithTitles:@[@"QQ",@"�
     [self.navigationController pushViewController:pageVc animated:YES];
 }
 ```
+还有不明白的详见 Demo, 里面写的很详细.
