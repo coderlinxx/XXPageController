@@ -7,6 +7,7 @@
 //
 
 #import "PageCell1Controller.h"
+#import "ViewController.h"
 
 @interface PageCell1Controller ()<UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic ,strong)UITableView *tableView;
@@ -26,7 +27,7 @@
 }
 
 -(UIView *)addHeaderView{
-    UIImageView *header = [[UIImageView alloc] initWithFrame:CGRectMake(0, -64, SCREEN_Width, 200)];
+    UIImageView *header = [[UIImageView alloc] initWithFrame:(CGRect){{0, 0}, {SCREEN_Width, 200}}];
     [header setImage:[UIImage imageNamed:@"bg"]];
     header.contentMode = UIViewContentModeScaleAspectFill;
     header.clipsToBounds = YES;
@@ -36,7 +37,7 @@
 
 -(void)addTableView{
     CGRect frame = self.view.bounds;
-    frame.size.height = frame.size.height - 64 - 40;
+    frame.size.height = frame.size.height - 64 - 100;
     _tableView = [[UITableView alloc] initWithFrame:frame];
     _tableView.delegate = self;
     _tableView.dataSource = self;
@@ -46,7 +47,6 @@
     _indicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     _indicatorView.hidesWhenStopped = YES;
     _indicatorView.center = _tableView.center;
-    _indicatorView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin;
     [self.view addSubview:_indicatorView];
     
     [_indicatorView startAnimating];
@@ -82,8 +82,12 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    //    ViewController *vc = [[ViewController alloc] init];
-    //    [self.navigationController pushViewController:vc animated:YES];
+        ViewController *vc = [[ViewController alloc] init];
+        [self.navigationController pushViewController:vc animated:YES];
+}
+
+-(void)dealloc{
+    NSLog(@"dealloc : %@",self.class);
 }
 
 @end

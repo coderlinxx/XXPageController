@@ -12,17 +12,18 @@
 #import "ViewController.h"
 #import "PopEnabeldCollectionView.h"
 @interface XXPageController ()<UICollectionViewDataSource,UICollectionViewDelegate>
-/** 分页条高度 */
-@property(nonatomic, assign) CGFloat pageBarHeight;
+
+/** 分页条滑动的下滑线 */
+@property(nonatomic, strong)UIView *line;
+/** 下滑线宽度 */
+@property(nonatomic, assign)CGFloat lineWidth;
 /** 是否将分页工具条创建在NavigationBar上 */
 @property(nonatomic,assign) BOOL onNavigationBar;
 /** 分页工具条 */
 @property(nonatomic, weak)UICollectionView *collectionPage;
 /** 主collection视图 */
 @property(nonatomic, weak)PopEnabeldCollectionView *collectionMain;
-/** 分页条下边线 */
-@property(nonatomic, strong)UIView *line;
-@property(nonatomic, assign)CGFloat lineWidth;
+
 /** 动态滑动时所记录的最后的 X 坐标 */
 @property(nonatomic,assign)int lastPositionX;
 /** 分页条滑动方向  默认值给 YES */
@@ -30,7 +31,7 @@
 
 @property(nonatomic ,strong)NSArray *itemsArray;
 @property(nonatomic, strong)NSArray *controllersClass;
-@property(nonatomic, strong)NSMutableArray *controllers;
+@property(nonatomic, strong)NSArray *controllers;
 
 @end
 
@@ -44,43 +45,60 @@ static NSString *mainCell = @"mainCellmainCell";
 
 @implementation XXPageController
 
--(NSMutableArray *)controllers{
+-(NSArray *)controllers{
     if (!_controllers) {
         NSMutableArray *controllers = [NSMutableArray array];
-        for (int i = 0; i < _controllersClass.count; i ++) {
-            Class className = _controllersClass[i];
+        [_controllersClass enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            Class className = _controllersClass[idx];
             UIViewController *vc = [[className alloc] init];
-            vc.title = _itemsArray[i];      //可以给各个分页赋标题
+            vc.title = _itemsArray[idx];      //可以给各个分页赋标题,但是 UI 上没有 vc.title 的表现
             [self addChildViewController:vc];
             [controllers addObject:vc];
-        }
-        _controllers = controllers;
+        }];
+        _controllers = [NSArray arrayWithArray:controllers];
+    }else{
+        [_controllers enumerateObjectsUsingBlock:^(UIViewController *  _Nonnull vc, NSUInteger idx, BOOL * _Nonnull stop) {
+            vc.title = _itemsArray[idx];      //可以给各个分页赋标题,但是 UI 上没有 vc.title 的表现
+            [self addChildViewController:vc];
+        }];
     }
     return _controllers;
 }
 
--(instancetype) initWithTitles:(NSArray *)titlesArray controllersClass:(NSArray *)controllersClass onNavigationBar:(BOOL)onNavigationBar{
+- (instancetype)initWithTitles:(NSArray *)titlesArray controllersClass:(NSArray *)controllersClass onNavigationBar:(BOOL)onNavigationBar{
     if (self == [super init]) {
         self.onNavigationBar = onNavigationBar;
         self.itemsArray = titlesArray;
         self.controllersClass = controllersClass;
-        self.pageBarHeight = 40;
-        self.automaticallyAdjustsScrollViewInsets = NO;
-        [self addCollectionPage];
-        [self addCollectionMain];
+        _pageBarHeight = 40;
+    }
+    return self;
+}
+/**
+ 自动创建全部控制器的分页创建方式
+ */
+- (instancetype)initWithTitles:(NSArray *)titlesArray controllers:(NSArray *)controllers onNavigationBar:(BOOL)onNavigationBar{
+    if (self == [super init]) {
+        self.onNavigationBar = onNavigationBar;
+        self.itemsArray = titlesArray;
+        self.controllers = controllers;
+        _pageBarHeight = 40;
     }
     return self;
 }
 
--(void)setPageBarHeight:(CGFloat)pageBarHeight{
-    _pageBarHeight = pageBarHeight;
-}
-
 -(void)viewDidLoad{
+    
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
+    self.automaticallyAdjustsScrollViewInsets = NO;
+
+    //init default value
     _scrollToRight = YES;
     _lastPositionX = 0;
+    
+    [self addCollectionPage];
+    [self addCollectionMain];
 }
 
 -(void)addCollectionPage{
@@ -89,7 +107,7 @@ static NSString *mainCell = @"mainCellmainCell";
     layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
     CGRect frame;
     if (_onNavigationBar) {
-        frame = CGRectMake(0, 0, CollectionWidth, 40);
+        frame = CGRectMake(0, 0, CollectionWidth, _pageBarHeight);
     }else{
         frame = CGRectMake(0, 64, self.view.bounds.size.width, _pageBarHeight);
     }
@@ -103,7 +121,7 @@ static NSString *mainCell = @"mainCellmainCell";
     [collection registerClass:[ItemCell class] forCellWithReuseIdentifier:pageBarCell];
     self.collectionPage = collection;
     if (_onNavigationBar) {
-        collection.backgroundColor = [UIColor clearColor];
+        collection.backgroundColor = [UIColor clearColor];  //位于导航条时背景色处理为透明色,不公开属性
         self.navigationItem.titleView = self.collectionPage;
         if (_itemsArray.count <= 3) {
             _lineWidth = CollectionWidth / _itemsArray.count;
@@ -111,7 +129,7 @@ static NSString *mainCell = @"mainCellmainCell";
             _lineWidth = CollectionWidth / 3;
         }
     }else{
-        collection.backgroundColor = [UIColor greenColor];
+        collection.backgroundColor = _pageBarBgColor ? : [UIColor greenColor];
         [self.view addSubview:self.collectionPage];
         if (_itemsArray.count <= 4) {
             _lineWidth = SCREEN_Width / _itemsArray.count;
@@ -119,9 +137,8 @@ static NSString *mainCell = @"mainCellmainCell";
             _lineWidth = SCREEN_Width / 4;
         }
     }
-    _line = [[UIView alloc] init];
-    _line.backgroundColor = [UIColor blueColor];
-    _line.frame = CGRectMake(0, _pageBarHeight - 3, _lineWidth, 3);
+    _line = [[UIView alloc] initWithFrame:CGRectMake(0, _pageBarHeight - 3, _lineWidth, 3)];
+    _line.backgroundColor = _lineColor ? : [UIColor blueColor];
     [self.collectionPage addSubview:_line];
     [self.collectionPage bringSubviewToFront:_line];
     
@@ -140,7 +157,7 @@ static NSString *mainCell = @"mainCellmainCell";
     }
     
     PopEnabeldCollectionView *collection = [[PopEnabeldCollectionView alloc] initWithFrame:frame collectionViewLayout:layout];
-    collection.backgroundColor = [UIColor whiteColor];
+    collection.backgroundColor = [UIColor greenColor];
     collection.dataSource = self;
     collection.delegate = self;
     collection.pagingEnabled = YES;
@@ -188,12 +205,14 @@ static NSString *mainCell = @"mainCellmainCell";
     if (collectionView == self.collectionPage) {
         ItemCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:pageBarCell forIndexPath:indexPath];
         [cell sizeToFit];
-        NSString *title = self.itemsArray[indexPath.row];
-        [cell setTitleString:title];
+        [cell.titleLabel setText:self.itemsArray[indexPath.row]];
+        [cell.titleLabel setFont:_titleFont ? : [UIFont systemFontOfSize:13]];
+        [cell.titleLabel setTextColor:_titleColor ? : [UIColor colorWithWhite:0.15 alpha:1]];
         return cell;
     }else{
         MainCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:mainCell forIndexPath:indexPath];
         [cell setIndexController:self.controllers[indexPath.row]];
+        NSLog(@"indexController.view.frame = %@",NSStringFromCGRect(cell.indexController.view.frame));
         return cell;
     }
 }
@@ -248,6 +267,10 @@ static NSString *mainCell = @"mainCellmainCell";
         }
         _lastPositionX = currentPostion;
     }
+}
+
+-(void)dealloc{
+    NSLog(@"dealloc : %@ ",self.class);
 }
 
 - (void)didReceiveMemoryWarning {

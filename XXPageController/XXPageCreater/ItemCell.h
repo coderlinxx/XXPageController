@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface ItemCell : UICollectionViewCell
-@property(nonatomic ,copy)NSString * titleString;
+@property(nonatomic, strong) UILabel *titleLabel;
 @end

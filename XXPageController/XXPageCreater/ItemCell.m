@@ -9,7 +9,7 @@
 #import "ItemCell.h"
 
 @interface ItemCell ()
-@property(nonatomic,weak)UILabel *titleLabel;
+
 @end
 
 @implementation ItemCell
@@ -17,28 +17,16 @@
 -(instancetype)initWithFrame:(CGRect)frame{
     if (self == [super initWithFrame:frame]) {
         self.backgroundColor = [UIColor clearColor];
-        [self creatUI];
+        _titleLabel = [[UILabel alloc] initWithFrame:self.bounds];
+        _titleLabel.textAlignment = NSTextAlignmentCenter;
+        [self.contentView addSubview:_titleLabel];
     }
     return self;
 }
 
-- (void)creatUI{
-    UILabel *labelName = [[UILabel alloc] init];
-    labelName.textColor =  [UIColor colorWithWhite:0.15 alpha:1];
-    labelName.font = [UIFont systemFontOfSize:13];
-    labelName.textAlignment = NSTextAlignmentCenter;
-    self.titleLabel = labelName;
-    [self.contentView addSubview:self.titleLabel];
-}
-
--(void)setTitleString:(NSString *)titleString{
-    _titleString = titleString;
-    _titleLabel.text = titleString;
-}
-
--(void)layoutSubviews{
-    [super layoutSubviews];
-    self.titleLabel.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
-}
+//-(void)layoutSubviews{
+//    [super layoutSubviews];
+//    self.titleLabel.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
+//}
 
 @end

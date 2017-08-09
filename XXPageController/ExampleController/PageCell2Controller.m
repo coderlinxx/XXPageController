@@ -26,7 +26,7 @@
 }
 
 -(UIView *)addHeaderView{
-    UIImageView *header = [[UIImageView alloc] initWithFrame:CGRectMake(0, -64, SCREEN_Width, 200)];
+    UIImageView *header = [[UIImageView alloc] initWithFrame:(CGRect){{0, 0}, {SCREEN_Width, 200}}];
     [header setImage:[UIImage imageNamed:@"bg"]];
     header.contentMode = UIViewContentModeScaleAspectFill;
     header.clipsToBounds = YES;

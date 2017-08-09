@@ -79,7 +79,7 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    UIViewController *pageVc;
+    XXPageController *pageVc;
     switch (indexPath.row) {
         case 0:
         {
@@ -88,7 +88,13 @@
             break;
         case 1:
         {
-            pageVc = [[XXPageController alloc] initWithTitles:@[@"QQ",@"旺旺",@"微信",@"腾讯",@"阿里",@"天猫",@"淘宝",@"大姨妈"] controllersClass:@[[PageCell1Controller class],[PageCell1Controller class],[PageCell1Controller class],[PageCell1Controller class],[PageCell1Controller class],[PageCell1Controller class],[PageCell1Controller class],[PageCell1Controller class]] onNavigationBar:NO];
+//            pageVc = [[XXPageController alloc] initWithTitles:@[@"QQ",@"旺旺",@"微信",@"腾讯",@"阿里",@"天猫",@"淘宝",@"大姨妈"] controllersClass:@[[PageCell1Controller class],[PageCell1Controller class],[PageCell1Controller class],[PageCell1Controller class],[PageCell1Controller class],[PageCell1Controller class],[PageCell1Controller class],[PageCell1Controller class]] onNavigationBar:NO];
+            
+            pageVc = [[XXPageController alloc] initWithTitles:@[@"QQ",@"旺旺",@"微信",@"腾讯",@"阿里",@"天猫",@"淘宝",@"大姨妈"] controllers:@[[PageCell1Controller new],[PageCell1Controller new],[PageCell1Controller new],[PageCell1Controller new],[PageCell1Controller new],[PageCell1Controller new],[PageCell1Controller new],[PageCell1Controller new],] onNavigationBar:NO];
+            
+            pageVc.titleColor = [UIColor whiteColor];
+            pageVc.pageBarBgColor = [UIColor blackColor];
+            pageVc.pageBarHeight = 100;
         }
             break;
         case 2:
@@ -104,7 +110,7 @@
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 60;
+    return 50;
 }
 
 - (void)didReceiveMemoryWarning {
