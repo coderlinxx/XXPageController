@@ -114,13 +114,9 @@ static NSString *mainCell = @"inxx_mainCell";
     _lastPositionX = 0;
     
     _pageBarHeight = _pageBarHeight ? : 40;
-    
     _pageBarBgColor = _pageBarBgColor ? : [UIColor greenColor];
-    
     _lineColor = _lineColor ? : [UIColor blueColor];
-    
     _titleFont = _titleFont ? : [UIFont systemFontOfSize:13];
-    
     _titleColor = _titleColor ? : [UIColor colorWithWhite:0.15 alpha:1];
 }
 
@@ -128,12 +124,7 @@ static NSString *mainCell = @"inxx_mainCell";
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
     layout.minimumLineSpacing = 0;
     layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-    CGRect frame;
-    if (_onNavigationBar) {
-        frame = CGRectMake(0, 0, CollectionWidth, _pageBarHeight);
-    }else{
-        frame = CGRectMake(0, 64, self.view.bounds.size.width, _pageBarHeight);
-    }
+    CGRect frame = _onNavigationBar ? CGRectMake(0, 0, CollectionWidth, _pageBarHeight) : CGRectMake(0, 64, self.view.bounds.size.width, _pageBarHeight);
     UICollectionView *collection = [[UICollectionView alloc] initWithFrame:frame collectionViewLayout:layout];
     collection.dataSource = self;
     collection.delegate = self;
@@ -146,39 +137,23 @@ static NSString *mainCell = @"inxx_mainCell";
     if (_onNavigationBar) {
         collection.backgroundColor = [UIColor clearColor];  //位于导航条时背景色处理为透明色,不公开属性
         self.navigationItem.titleView = self.collectionPage;
-        if (_itemsArray.count <= 3) {
-            _lineWidth = CollectionWidth / _itemsArray.count;
-        }else{
-            _lineWidth = CollectionWidth / 3;
-        }
+        _lineWidth = (_itemsArray.count <= 3) ? CollectionWidth / _itemsArray.count : CollectionWidth / 3;
     }else{
         collection.backgroundColor = _pageBarBgColor;
         [self.view addSubview:self.collectionPage];
-        if (_itemsArray.count <= 4) {
-            _lineWidth = SCREEN_Width / _itemsArray.count;
-        }else{
-            _lineWidth = SCREEN_Width / 4;
-        }
+        _lineWidth = (_itemsArray.count <= 4) ? SCREEN_Width / _itemsArray.count : SCREEN_Width / 4;
     }
     _line = [[UIView alloc] initWithFrame:CGRectMake(0, _pageBarHeight - 3, _lineWidth, 3)];
     _line.backgroundColor = _lineColor;
     [self.collectionPage addSubview:_line];
     [self.collectionPage bringSubviewToFront:_line];
-    
 }
 
 -(void)addCollectionMain{
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
     layout.minimumLineSpacing = 0;
     layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-    
-    CGRect frame;
-    if (_onNavigationBar) {
-        frame = CGRectMake(0, 64, self.view.bounds.size.width,self.view.bounds.size.height - 64);
-    }else{
-        frame = CGRectMake(0, CGRectGetMaxY(_collectionPage.frame), self.view.bounds.size.width, self.view.bounds.size.height - 64 - _pageBarHeight);
-    }
-    
+    CGRect frame = _onNavigationBar ? CGRectMake(0, 64, self.view.bounds.size.width,self.view.bounds.size.height - 64) : CGRectMake(0, CGRectGetMaxY(_collectionPage.frame), self.view.bounds.size.width, self.view.bounds.size.height - 64 - _pageBarHeight);
     PopEnabeldCollectionView *collection = [[PopEnabeldCollectionView alloc] initWithFrame:frame collectionViewLayout:layout];
     collection.backgroundColor = [UIColor greenColor];
     collection.dataSource = self;
