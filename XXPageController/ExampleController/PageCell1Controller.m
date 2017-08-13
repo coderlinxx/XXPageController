@@ -37,7 +37,7 @@
 
 -(void)addTableView{
     CGRect frame = self.view.bounds;
-    frame.size.height = frame.size.height - 64 - 100;
+    frame.size.height = frame.size.height - 64 - 32;
     _tableView = [[UITableView alloc] initWithFrame:frame];
     _tableView.delegate = self;
     _tableView.dataSource = self;
@@ -82,12 +82,8 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-        ViewController *vc = [[ViewController alloc] init];
-        [self.navigationController pushViewController:vc animated:YES];
+    [self.navigationController pushViewController:[ViewController new]  animated:YES];
 }
 
--(void)dealloc{
-    NSLog(@"dealloc : %@",self.class);
-}
 
 @end

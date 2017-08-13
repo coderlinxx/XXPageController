@@ -7,10 +7,7 @@
 //
 
 #import "XXPageController.h"
-#import "ItemCell.h"
-#import "MainCell.h"
 #import "ViewController.h"
-#import "PopEnabeldCollectionView.h"
 @interface XXPageController ()<UICollectionViewDataSource,UICollectionViewDelegate>
 
 /** 分页条滑动的下滑线 */
@@ -23,7 +20,6 @@
 @property(nonatomic, weak)UICollectionView *collectionPage;
 /** 主collection视图 */
 @property(nonatomic, weak)PopEnabeldCollectionView *collectionMain;
-
 /** 动态滑动时所记录的最后的 X 坐标 */
 @property(nonatomic,assign)int lastPositionX;
 /** 分页条滑动方向  默认值给 YES */
@@ -35,13 +31,13 @@
 
 @end
 
-#define CollectionWidth (SCREEN_Width-120)
+#define CollectionWidth (SCREEN_Width - 120)
 #define SCREEN_Width ([[UIScreen mainScreen] bounds].size.width)
 #define SCREEN_Height ([[UIScreen mainScreen] bounds].size.height)
 #define ColorWithRGB(r,g,b,a) [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:a]
 
-static NSString *pageBarCell = @"pageBarCell";
-static NSString *mainCell = @"mainCellmainCell";
+static NSString *pageBarCell = @"inxx_pageBarCell";
+static NSString *mainCell = @"inxx_mainCell";
 
 @implementation XXPageController
 
@@ -70,35 +66,62 @@ static NSString *mainCell = @"mainCellmainCell";
         self.onNavigationBar = onNavigationBar;
         self.itemsArray = titlesArray;
         self.controllersClass = controllersClass;
-        _pageBarHeight = 40;
     }
     return self;
 }
-/**
- 自动创建全部控制器的分页创建方式
- */
+
 - (instancetype)initWithTitles:(NSArray *)titlesArray controllers:(NSArray *)controllers onNavigationBar:(BOOL)onNavigationBar{
     if (self == [super init]) {
         self.onNavigationBar = onNavigationBar;
         self.itemsArray = titlesArray;
         self.controllers = controllers;
-        _pageBarHeight = 40;
     }
     return self;
 }
 
+- (void)addPageViewControllerToSuperViewController:(UIViewController *)viewController{
+    [viewController.view addSubview:self.view];
+    [viewController addChildViewController:self];
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    //将XXPageController对象的view被添加到另一个控制器的view上时就会发生if内的情况
+    if (self.nextResponder && self.view.superview && self.view.superview == self.nextResponder) {
+        UIViewController *controller = (UIViewController *)self.view.superview.nextResponder;
+        //解决一个view上面放两个不同的collectionview的显示冲突
+        controller.automaticallyAdjustsScrollViewInsets = NO;
+    }else{
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
+}
+
 -(void)viewDidLoad{
-    
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
-    self.automaticallyAdjustsScrollViewInsets = NO;
+    
+    //配置属性
+    [self configProperties];
+    
+    [self addCollectionPage];
+    [self addCollectionMain];
+}
 
+- (void)configProperties{
+    
     //init default value
     _scrollToRight = YES;
     _lastPositionX = 0;
     
-    [self addCollectionPage];
-    [self addCollectionMain];
+    _pageBarHeight = _pageBarHeight ? : 40;
+    
+    _pageBarBgColor = _pageBarBgColor ? : [UIColor greenColor];
+    
+    _lineColor = _lineColor ? : [UIColor blueColor];
+    
+    _titleFont = _titleFont ? : [UIFont systemFontOfSize:13];
+    
+    _titleColor = _titleColor ? : [UIColor colorWithWhite:0.15 alpha:1];
 }
 
 -(void)addCollectionPage{
@@ -129,7 +152,7 @@ static NSString *mainCell = @"mainCellmainCell";
             _lineWidth = CollectionWidth / 3;
         }
     }else{
-        collection.backgroundColor = _pageBarBgColor ? : [UIColor greenColor];
+        collection.backgroundColor = _pageBarBgColor;
         [self.view addSubview:self.collectionPage];
         if (_itemsArray.count <= 4) {
             _lineWidth = SCREEN_Width / _itemsArray.count;
@@ -138,7 +161,7 @@ static NSString *mainCell = @"mainCellmainCell";
         }
     }
     _line = [[UIView alloc] initWithFrame:CGRectMake(0, _pageBarHeight - 3, _lineWidth, 3)];
-    _line.backgroundColor = _lineColor ? : [UIColor blueColor];
+    _line.backgroundColor = _lineColor;
     [self.collectionPage addSubview:_line];
     [self.collectionPage bringSubviewToFront:_line];
     
@@ -164,7 +187,7 @@ static NSString *mainCell = @"mainCellmainCell";
     collection.scrollEnabled = YES;
     collection.bounces = NO;   //禁止左右弹簧拉伸
     collection.showsHorizontalScrollIndicator = NO;
-    [collection registerClass:[MainCell class] forCellWithReuseIdentifier:mainCell];
+    [collection registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:mainCell];
     self.collectionMain = collection;
     [self.view addSubview:collection];
     [self.view bringSubviewToFront:self.collectionMain];
@@ -186,10 +209,6 @@ static NSString *mainCell = @"mainCellmainCell";
     }
 }
 
--(UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section{
-    return UIEdgeInsetsMake(0, 0, 0, 0);
-}
-
 
 #pragma mark - UICollectionViewDataSource && UICollectionViewDelegate
 
@@ -206,13 +225,12 @@ static NSString *mainCell = @"mainCellmainCell";
         ItemCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:pageBarCell forIndexPath:indexPath];
         [cell sizeToFit];
         [cell.titleLabel setText:self.itemsArray[indexPath.row]];
-        [cell.titleLabel setFont:_titleFont ? : [UIFont systemFontOfSize:13]];
-        [cell.titleLabel setTextColor:_titleColor ? : [UIColor colorWithWhite:0.15 alpha:1]];
+        [cell.titleLabel setFont:_titleFont];
+        [cell.titleLabel setTextColor:_titleColor];
         return cell;
     }else{
-        MainCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:mainCell forIndexPath:indexPath];
-        [cell setIndexController:self.controllers[indexPath.row]];
-        NSLog(@"indexController.view.frame = %@",NSStringFromCGRect(cell.indexController.view.frame));
+        UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:mainCell forIndexPath:indexPath];
+        [cell.contentView addSubview:((UIViewController *)self.controllers[indexPath.row]).view];
         return cell;
     }
 }
@@ -278,4 +296,29 @@ static NSString *mainCell = @"mainCellmainCell";
     // Dispose of any resources that can be recreated.
 }
 
+@end
+
+
+@implementation PopEnabeldCollectionView
+-(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer{
+    if ([otherGestureRecognizer.view isKindOfClass:NSClassFromString(@"UILayoutContainerView")]) {
+        if (otherGestureRecognizer.state == UIGestureRecognizerStateBegan && self.contentOffset.x == 0) {
+            return YES;
+        }
+    }
+    return NO;
+}
+@end
+
+
+@implementation ItemCell
+-(instancetype)initWithFrame:(CGRect)frame{
+    if (self == [super initWithFrame:frame]) {
+        self.backgroundColor = [UIColor clearColor];
+        _titleLabel = [[UILabel alloc] initWithFrame:self.bounds];
+        _titleLabel.textAlignment = NSTextAlignmentCenter;
+        [self.contentView addSubview:_titleLabel];
+    }
+    return self;
+}
 @end
