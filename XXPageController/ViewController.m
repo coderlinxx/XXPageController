@@ -23,6 +23,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     self.title = @"PageMenu:控制器展示方式";
     self.view.backgroundColor = [UIColor whiteColor];
     _tableView = [[UITableView alloc] initWithFrame:self.view.bounds];
