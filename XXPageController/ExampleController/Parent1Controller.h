@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewOnViewController : UIViewController
+@interface Parent1Controller : UIViewController
 
 @end

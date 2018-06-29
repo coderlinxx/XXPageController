@@ -7,13 +7,12 @@
 //
 
 #import "PageCell2Controller.h"
-
+#import "ImageViewController.h"
+#import "XXPageMenuHeader.h"
 @interface PageCell2Controller ()<UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic ,strong)UITableView *tableView;
 @property (nonatomic, strong) UIActivityIndicatorView *indicatorView;
 @end
-
-#define SCREEN_Width ([[UIScreen mainScreen] bounds].size.width)
 
 @implementation PageCell2Controller
 
@@ -22,11 +21,10 @@
     self.view.backgroundColor = [UIColor whiteColor];
 
     [self addTableView];
-    
 }
 
 -(UIView *)addHeaderView{
-    UIImageView *header = [[UIImageView alloc] initWithFrame:(CGRect){{0, 0}, {SCREEN_Width, 200}}];
+    UIImageView *header = [[UIImageView alloc] initWithFrame:(CGRect){{0, 0}, {ScreenW, 200}}];
     [header setImage:[UIImage imageNamed:@"bg"]];
     header.contentMode = UIViewContentModeScaleAspectFill;
     header.clipsToBounds = YES;
@@ -36,11 +34,11 @@
 
 -(void)addTableView{
     CGRect frame = self.view.bounds;
-    frame.size.height = frame.size.height - 64;
+    frame.size.height = frame.size.height - kNavAndStatus_Height;
     _tableView = [[UITableView alloc] initWithFrame:frame];
     _tableView.delegate = self;
     _tableView.dataSource = self;
-    _tableView.tableHeaderView = [self addHeaderView];
+//    _tableView.tableHeaderView = [self addHeaderView];
     _tableView.tableFooterView = [[UIView alloc] init];
     
     _indicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
@@ -82,8 +80,7 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-//    ViewController *vc = [[ViewController alloc] init];
-//    [self.navigationController pushViewController:vc animated:YES];
+    [self.navigationController pushViewController:[ImageViewController new] animated:YES];
 }
 
 @end
