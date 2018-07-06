@@ -1,7 +1,7 @@
 # XXPageController
 分页加载控制器XXPageMenuController.提供了多种不同的分页动态展示效果.
 
-###2018年7月6日更新:
+*2018年7月6日更新:
 
 >https://www.jianshu.com/p/20845080a7a4
 
