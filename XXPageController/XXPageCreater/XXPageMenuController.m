@@ -26,15 +26,18 @@
 /** 分页工具条上每个 cell 的宽度 */
 @property (nonatomic,assign) CGFloat pageCellW;
 
-@property(nonatomic ,strong)NSArray *itemsArray;
+@property(nonatomic ,strong)NSArray *titles;
 @property(nonatomic, strong)NSArray *controllersClass;
 @property(nonatomic, strong)NSArray *controllers;
+@property(nonatomic ,strong)NSArray *icons;
 
 /** 当前选中的 index 位置 */
 @property (nonatomic,assign) NSInteger selectedIndex;
+
 @end
 
 #define kPageSlideCount 4  //分页工具条可滑动的条目数量临界值
+#define kLineStaticWidth 30 //下划线的静态长度
 
 static NSString *pageBarCell = @"inxx_pageBarCell";
 static NSString *mainCell = @"inxx_mainCell";
@@ -47,36 +50,41 @@ static NSString *mainCell = @"inxx_mainCell";
         [_controllersClass enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             Class className = _controllersClass[idx];
             UIViewController *vc = [className new];
-            vc.title = _itemsArray[idx];      //可以给各个分页赋标题,但是 UI 上没有 vc.title 的表现
+            vc.title = _titles[idx];
             [self addChildViewController:vc];
             [controllers addObject:vc];
         }];
         _controllers = [NSArray arrayWithArray:controllers];
     }else{
         [_controllers enumerateObjectsUsingBlock:^(UIViewController *  _Nonnull vc, NSUInteger idx, BOOL * _Nonnull stop) {
-            vc.title = _itemsArray[idx];      //可以给各个分页赋标题,但是 UI 上没有 vc.title 的表现
+            vc.title = _titles[idx];
             [self addChildViewController:vc];
         }];
     }
     return _controllers;
 }
 
-- (instancetype)initWithTitles:(NSArray *)titlesArray controllersClass:(NSArray *)controllersClass onNavigationBar:(BOOL)onNavigationBar{
+- (instancetype)initWithTitles:(NSArray *)titles controllersClass:(NSArray *)controllersClass onNavigationBar:(BOOL)onNavigationBar{
     if (self == [super init]) {
         self.onNavigationBar = onNavigationBar;
-        self.itemsArray = titlesArray;
+        self.titles = titles;
         self.controllersClass = controllersClass;
     }
     return self;
 }
 
-- (instancetype)initWithTitles:(NSArray *)titlesArray controllers:(NSArray *)controllers onNavigationBar:(BOOL)onNavigationBar{
+- (instancetype)initWithTitles:(NSArray *)titles controllers:(NSArray *)controllers onNavigationBar:(BOOL)onNavigationBar{
     if (self == [super init]) {
         self.onNavigationBar = onNavigationBar;
-        self.itemsArray = titlesArray;
+        self.titles = titles;
         self.controllers = controllers;
     }
     return self;
+}
+
+- (instancetype)initWithTitles:(NSArray *)titles iconNames:(NSArray *)iconNames controllers:(NSArray *)controllers onNavigationBar:(BOOL)onNavigationBar{
+    self.icons = iconNames;
+    return [self initWithTitles:titles controllers:controllers onNavigationBar:onNavigationBar];
 }
 
 - (void)setSuperViewController:(UIViewController *)superVc{
@@ -103,14 +111,11 @@ static NSString *mainCell = @"inxx_mainCell";
 
 - (void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
-    
-    /** 在_onNavigationBar上面时,子视图出现的顺序是不一样的!
-        需要在UINavigationController的视图显示以后,子视图才会显示!
-        猜测,并做了一些验证:
-        iOS 11之后可能修复了这个...
+    /** △猜测并验证:  iOS 11前后在_onNavigationBar上面时,子视图出现的顺序是不一样的!
+     iOS 11前需要在UINavigationController的视图显示以后,子视图才会显示!  iOS 11之后可能修复了这个bug
      */
     if (_onNavigationBar && [UIDevice currentDevice].systemVersion.doubleValue<=11.0 && self.selectedIndex >= kPageSlideCount) {
-         [self.collectionPage scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:self.selectedIndex inSection:0] atScrollPosition:UICollectionViewScrollPositionLeft animated:NO];
+        [self.collectionPage scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:self.selectedIndex inSection:0] atScrollPosition:UICollectionViewScrollPositionLeft animated:NO];
     }
 }
 
@@ -130,7 +135,6 @@ static NSString *mainCell = @"inxx_mainCell";
         NSInteger oldIndex = [[change objectForKey:NSKeyValueChangeOldKey] integerValue];
         NSInteger newIndex = [[change objectForKey:NSKeyValueChangeNewKey] integerValue];
         if (newIndex != oldIndex) {
-            NSLog(@"已经响应到KVO, 并且selectedIndex已经改变! oldIndex = %zd, newIndex = %zd",oldIndex,newIndex);
             [self.collectionPage reloadData];
         }
     }
@@ -161,7 +165,7 @@ static NSString *mainCell = @"inxx_mainCell";
     _titleColor = _titleColor ? : [UIColor colorWithWhite:0.2 alpha:1];
     _titleSelectedColor = _titleSelectedColor ?: [UIColor blackColor];
     _pageMenuW =  _onNavigationBar ? (ScreenW - 120) : ScreenW; //120为预估的左右navigationItem的总宽度
-    _pageCellW = (_itemsArray.count <= kPageSlideCount) ? _pageMenuW / _itemsArray.count : _pageMenuW / kPageSlideCount;
+    _pageCellW = (_titles.count <= kPageSlideCount) ? _pageMenuW / _titles.count : _pageMenuW / kPageSlideCount;
         
     self.selectedIndex = _selectedIndex ? : 0;
 }
@@ -171,7 +175,7 @@ static NSString *mainCell = @"inxx_mainCell";
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
     layout.minimumLineSpacing = 0;
     layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-    CGFloat width = (_itemsArray.count <= kPageSlideCount) ? _pageMenuW / _itemsArray.count : _pageMenuW / kPageSlideCount ;
+    CGFloat width = (_titles.count <= kPageSlideCount) ? _pageMenuW / _titles.count : _pageMenuW / kPageSlideCount ;
     layout.itemSize = CGSizeMake(width, _pageBarHeight);
     CGFloat pageMenuY = _onNavigationBar ? 0 : kNavAndStatus_Height;
     CGRect frame = CGRectMake(0, pageMenuY, _pageMenuW, _pageBarHeight);
@@ -218,7 +222,8 @@ static NSString *mainCell = @"inxx_mainCell";
     layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
     
     CGRect frame;
-    if (_onNavigationBar) { //分页条 onNavigationBar && isIPhoneX && parentViewController &&  如下
+    if (_onNavigationBar) {
+        //分页条 onNavigationBar && isIPhoneX && parentViewController &&  parentViewController不是NavigationController类型
         if (isIPhoneX && self.parentViewController && ![self.parentViewController isKindOfClass:[UINavigationController class]]) {
             layout.itemSize = CGSizeMake(ScreenW, ScreenH - kNavAndStatus_Height - kBottom_Safe_Height);
         }else{
@@ -248,23 +253,29 @@ static NSString *mainCell = @"inxx_mainCell";
 #pragma mark - UICollectionViewDataSource && UICollectionViewDelegate
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section{
-    return self.itemsArray.count;
+    return self.titles.count;
 }
 
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
     
     if (collectionView == self.collectionPage) {
+        
         ItemCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:pageBarCell forIndexPath:indexPath];
-        [cell.titleLabel setText:self.itemsArray[indexPath.row]];
         
-        if (indexPath.row == self.selectedIndex) {
-            [cell.titleLabel setFont:[UIFont boldSystemFontOfSize:(_titleFont.pointSize + 1)]];
-            [cell.titleLabel setTextColor:_titleSelectedColor];
-        }else{
-            [cell.titleLabel setFont:_titleFont];
-            [cell.titleLabel setTextColor:_titleColor];
+        BOOL isSeIndex = (indexPath.row == self.selectedIndex);  //是否是被选中行
+        
+        if (self.icons) {
+            cell.titleLabel.hidden = YES, cell.titleBtn.hidden = NO;
+            [cell.titleBtn setTitle:self.titles[indexPath.row] forState:UIControlStateNormal];
+            [cell.titleBtn setImage:[UIImage imageNamed:self.icons[indexPath.row]] forState:UIControlStateNormal];
+            [cell.titleBtn setTitleColor:(isSeIndex ? _titleSelectedColor : _titleColor) forState:UIControlStateNormal];
+            [cell.titleBtn.titleLabel setFont:(isSeIndex ? [UIFont boldSystemFontOfSize:(_titleFont.pointSize + 1)] : _titleFont)];
+        } else {
+            cell.titleLabel.hidden = NO, cell.titleBtn.hidden = YES;
+            [cell.titleLabel setText:self.titles[indexPath.row]];
+            [cell.titleLabel setTextColor:(isSeIndex ? _titleSelectedColor : _titleColor)];
+            [cell.titleLabel setFont:(isSeIndex ? [UIFont boldSystemFontOfSize:(_titleFont.pointSize + 1)] : _titleFont)];
         }
-        
         return cell;
     }else{
         UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:mainCell forIndexPath:indexPath];
@@ -278,7 +289,7 @@ static NSString *mainCell = @"inxx_mainCell";
     
     if (collectionView == self.collectionPage) {  //self.collectionMain的点击不用判断,会被具体视图所遮挡
         
-        if (self.lineScrollType != LineScrollTypeDynamicAnimation) { //LineScrollTypeDynamicAnimation时在scrollViewDidScroll:内已经滑动
+        if (self.lineScrollType != LineScrollTypeDynamicAnimation) { //DynamicAnimation时在scrollViewDidScroll:内已经滑动
             [UIView animateWithDuration:0.25 animations:^{
                 [self updateLineFrameWithIndex:indexPath.row];
             }];
@@ -309,30 +320,11 @@ static float oldOffsetX;
             _lineWidth = [self lineWidthWithsSelectedIndex:index]; //根据 index 值判断的静态宽度
             
             if (scrollView == self.collectionMain) {
-                BOOL toLeft;
-                if (x > oldOffsetX) {
-                    //NSLog(@"向左拉(手指左滑), newOffsetX = %.1f",x);
-                    toLeft = YES;
-                } else {
-                    //NSLog(@"向右拉(手指右滑), newOffsetX = %.1f",x);
-                    toLeft = NO;
-                }
+                
+                BOOL toLeft = (x > oldOffsetX) ;
                 oldOffsetX = x;
-                
-                /**line改变的长度changedW的逻辑推算:
-                 
-                 changedW  -----------------------_pageCellW
-                 
-                 (x-ScreenW*index)绝对值------------ ScreenW/2 (除以2的原因是index过半屏就会+1)
-                 
-                 ==>changedW/(x-ScreenW*index)绝对值 == _pageCellW / (ScreenW/2)
-                 
-                 ==> changedW = _pageCellW*2*fabs(x-ScreenW*index) / ScreenW;
-                 */
-                
-                //line 改变的长度
-                CGFloat changedW = _pageCellW*2*fabs(x-ScreenW*index) / ScreenW;
-                //NSLog(@"滑动距离 = %.1f,  index = %d, changedW = %.1f",(x-ScreenW*index),index,changedW);
+
+                CGFloat changedW = _pageCellW*fabs(x-ScreenW*index)*2 / ScreenW; //line 改变的长度
                 
                 _line.frame = CGRectMake(0, _pageBarHeight-_lineHeight,  _lineWidth+changedW, _lineHeight);
                 
@@ -364,7 +356,8 @@ static float oldOffsetX;
     
     if (scrollView == self.collectionMain) {
         
-        if (self.lineScrollType == LineScrollTypeFinishedLinear || self.lineScrollType == LineScrollTypeFinishedAnimation) {
+        if (self.lineScrollType != LineScrollTypeDynamicAnimation) {
+            
             CGFloat x = scrollView.contentOffset.x ;
             int index = (x + ScreenW*0.5) / ScreenW;         //滑动切换基准选择: ScreenW*0.5(半屏)
             
@@ -372,19 +365,8 @@ static float oldOffsetX;
                 [self.collectionPage scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:index - 1 inSection:0] atScrollPosition:UICollectionViewScrollPositionLeft animated:YES];
             }
             
-            //完成后的下划线动态动画
-            if (self.lineScrollType == LineScrollTypeFinishedAnimation) {
-                
-                /**优雅判断scrollView的滑动方向,这只针对一次手势（手指不离开屏幕:scrollView.panGestureRecognizer）中的一个方向有效!与UIPanGestureRecognizer有关的判断方式适用于 scrollViewDidEndDecelerating: 但是绝对不适用于 scrollViewDidScroll:
-                 */
+            if (self.lineScrollType == LineScrollTypeFinishedAnimation) {       //完成后的下划线动态动画
                 CGPoint point =  [scrollView.panGestureRecognizer translationInView:self.view];
-                
-                //                if (point.x > 0 ) {
-                //                    NSLog(@"------往→滚动");
-                //                }else{
-                //                    NSLog(@"------往←滚动");
-                //                }
-                
                 [UIView animateWithDuration:0.25 animations:^{
                     [self updateHalfLineFrameWithIndex:index direction:(point.x > 0)];
                 } completion:^(BOOL finished) {
@@ -394,8 +376,7 @@ static float oldOffsetX;
                 }];
             }
             
-            //或者线性平滑移动 2选1
-            if (self.lineScrollType == LineScrollTypeFinishedLinear) {
+            if (self.lineScrollType == LineScrollTypeFinishedLinear) {      //或者线性平滑移动 2选1
                 [UIView animateWithDuration:0.25 animations:^{
                     [self updateLineFrameWithIndex:index];
                 }];
@@ -423,31 +404,24 @@ static float oldOffsetX;
 
 - (CGFloat)lineWidthWithsSelectedIndex:(NSInteger)index{
     
-    //0.动态修改选中的 index
-    //    _selectedIndex = index; //这样写, KVO 是不会响应的...
-    self.selectedIndex = index;
-    NSLog(@"self.selectedIndex = %zd",index);
+    self.selectedIndex = index;     //动态修改选中的 index -> KVO
     
+    CGFloat adaptIconW = self.icons ? (15 + 6) : 0;  //15icon + 6margin
     switch (self.lineWidthType) {
         case LineWidthTypeStaticLong:
-            _lineWidth = (_itemsArray.count <= kPageSlideCount) ? _pageMenuW / _itemsArray.count : _pageMenuW / kPageSlideCount;
+            _lineWidth = (_titles.count <= kPageSlideCount) ? _pageMenuW / _titles.count : _pageMenuW / kPageSlideCount;
             break;
         case LineWidthTypeDynamic:
-            _lineWidth = ((NSString *)_itemsArray[index]).length * (_titleFont.pointSize);
+            _lineWidth = ((NSString *)_titles[index]).length * (_titleFont.pointSize) + adaptIconW;
             break;
-        default: //包含(LineWidthTypeStaticShort)
-            _lineWidth = 30;
+        default:
+            _lineWidth = kLineStaticWidth + adaptIconW;
             break;
     }
     return _lineWidth;
-    
-    
-   
-
 }
 
 -(void)dealloc{
-    NSLog(@"dealloc : %@ ",self.class);
     [self removeObserver:self forKeyPath:@"selectedIndex"];
 }
 
@@ -461,9 +435,7 @@ static float oldOffsetX;
 @implementation PopEnabeldCollectionView
 -(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer{
     if ([otherGestureRecognizer.view isKindOfClass:NSClassFromString(@"UILayoutContainerView")]) {
-        if (otherGestureRecognizer.state == UIGestureRecognizerStateBegan && self.contentOffset.x == 0) {
-            return YES;
-        }
+        if (otherGestureRecognizer.state == UIGestureRecognizerStateBegan && self.contentOffset.x == 0) return YES;
     }
     return NO;
 }
@@ -476,7 +448,18 @@ static float oldOffsetX;
         self.backgroundColor = [UIColor clearColor];
         _titleLabel = [[UILabel alloc] initWithFrame:self.bounds];
         _titleLabel.textAlignment = NSTextAlignmentCenter;
+        _titleLabel.lineBreakMode = NSLineBreakByClipping;
         [self.contentView addSubview:_titleLabel];
+        
+        _titleBtn = [[UIButton alloc] initWithFrame:self.bounds];
+        _titleBtn.contentMode = UIViewContentModeCenter;
+        _titleBtn.titleEdgeInsets = UIEdgeInsetsMake(0, 3, 0, 0);
+        _titleBtn.imageEdgeInsets = UIEdgeInsetsMake(1, -3, 0, 0);
+        CGSize size = CGSizeMake(15, 15);
+        _titleBtn.imageView.frame = (CGRect){{0,0},size};
+        _titleBtn.titleLabel.lineBreakMode = NSLineBreakByClipping;
+        _titleBtn.userInteractionEnabled = NO;
+        [self.contentView addSubview:_titleBtn];
     }
     return self;
 }

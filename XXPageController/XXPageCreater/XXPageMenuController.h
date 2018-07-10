@@ -69,7 +69,7 @@ typedef NS_ENUM(NSInteger, LineScrollType) {
  @param onNavigationBar 分页栏是否放在控制器导航栏上
  @return 栈顶控制管理器
  */
-- (instancetype)initWithTitles:(NSArray *)titlesArray controllers:(NSArray *)controllers onNavigationBar:(BOOL)onNavigationBar;
+- (instancetype)initWithTitles:(NSArray *)titles controllers:(NSArray *)controllers onNavigationBar:(BOOL)onNavigationBar;
 
 /**
  *  创建分页控制器 : 滑动到相应 index 位置时才去创建相应控制器,此方式不太好传参(方式二)
@@ -79,7 +79,20 @@ typedef NS_ENUM(NSInteger, LineScrollType) {
  *  @param onNavigationBar 分页栏是否放在控制器导航栏上
  *  @return 栈顶控制管理器
  */
-- (instancetype)initWithTitles:(NSArray *)titlesArray controllersClass:(NSArray *)controllersClass onNavigationBar:(BOOL)onNavigationBar;
+- (instancetype)initWithTitles:(NSArray *)titles controllersClass:(NSArray *)controllersClass onNavigationBar:(BOOL)onNavigationBar;
+
+
+
+/**
+ 创建分页控制器 : 自动创建全部控制器 && 标题可以带有小图标
+
+ @param titles 标题数组
+ @param icons 图标数组
+ @param controllers 控制器数组
+ @param onNavigationBar 分页栏是否放在控制器导航栏上
+ @return 栈顶控制管理器
+ */
+- (instancetype)initWithTitles:(NSArray *)titles iconNames:(NSArray *)iconNames controllers:(NSArray *)controllers onNavigationBar:(BOOL)onNavigationBar;
 
 /**
  如果将分页控制器添加到父视图控制器上,则直接调用此方式来最后添加到其上!
@@ -92,9 +105,10 @@ typedef NS_ENUM(NSInteger, LineScrollType) {
 @end
 
 /** 此子类的主要目的: iOS横向滚动的scrollView和系统pop手势返回冲突的解决办法,如果您使用了自定义的UINavigationController或者自定义了UINavigationBar 的返回按钮,那么此类必须使用 */
-@interface PopEnabeldCollectionView : UICollectionView<UIGestureRecognizerDelegate>
+@interface PopEnabeldCollectionView : UICollectionView
 @end
 
 @interface ItemCell : UICollectionViewCell
-@property(nonatomic, strong) UILabel *titleLabel;
+@property (nonatomic, strong) UILabel *titleLabel;
+@property (nonatomic, strong) UIButton *titleBtn;
 @end
