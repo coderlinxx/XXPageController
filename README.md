@@ -22,10 +22,10 @@
 ## 一. Installation 安装
 
 #### CocoaPods
-> pod 'XXPageCreater'   #iOS9 and later        
+> pod 'XXPageController'   #iOS9 and later        
 
 #### 手动安装
-> 将工程内`XXPageCreater`文件夹手动拽入项目中，导入头文件` #import "XXPageController.h"
+> 将工程内`XXPageMenuController`文件夹手动拽入项目中，导入头文件` #import "XXPageMenuController.h"
 
 ## 二. Use Example 使用方法
 
