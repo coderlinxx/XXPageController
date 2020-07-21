@@ -16,7 +16,7 @@ Pod::Spec.new do |spec|
   #
 
   spec.name         = "XXPageController"
-  spec.version      = "0.0.2"
+  spec.version      = "0.0.3"
   spec.summary      = "分页加载控制器."
 
   spec.description  = <<-DESC
@@ -29,7 +29,7 @@ Pod::Spec.new do |spec|
   spec.author             = { "林祥兴" => "inxxlin@gmail.com" }
   spec.platform     = :ios, "9.0"
   spec.source       = { :git => "https://github.com/coderlinxx/XXPageController.git", :tag => "#{spec.version}" }
-  spec.source_files  = "XXPageController/XXPageController/*.{h,m}"
+  spec.source_files  = "XXPageController/XXPageMenuController/*.{h,m}"
   
   # spec.exclude_files = "Classes/Exclude"
   # spec.public_header_files = "Classes/**/*.h"

@@ -90,7 +90,7 @@
 				C4F8F6F81C5F41270030181A /* AppDelegate.m */,
 				C4F8F6FA1C5F41270030181A /* ViewController.h */,
 				C4F8F6FB1C5F41270030181A /* ViewController.m */,
-				C4F8F70B1C5F41E70030181A /* XXPageCreater */,
+				C4F8F70B1C5F41E70030181A /* XXPageMenuController */,
 				C4F8F7181C5F41FC0030181A /* ExampleController */,
 				C4F8F6F41C5F41270030181A /* Supporting Files */,
 			);
@@ -111,13 +111,13 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		C4F8F70B1C5F41E70030181A /* XXPageCreater */ = {
+		C4F8F70B1C5F41E70030181A /* XXPageMenuController */ = {
 			isa = PBXGroup;
 			children = (
 				C4F8F7121C5F41E70030181A /* XXPageMenuController.h */,
 				C4F8F7131C5F41E70030181A /* XXPageMenuController.m */,
 			);
-			path = XXPageCreater;
+			path = XXPageMenuController;
 			sourceTree = "<group>";
 		};
 		C4F8F7181C5F41FC0030181A /* ExampleController */ = {
