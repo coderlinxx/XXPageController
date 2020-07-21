@@ -8,12 +8,14 @@
 
 #import "PageCell1Controller.h"
 #import "ImageViewController.h"
-#import "XXPageMenuHeader.h"
+#import "XXPageMenuController.h"
 
 @interface PageCell1Controller ()<UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic ,strong)UITableView *tableView;
 @property (nonatomic, strong) UIActivityIndicatorView *indicatorView;
 @end
+
+#define kNavAndStatus_Height ([[UIApplication sharedApplication] statusBarFrame].size.height + 44)
 
 @implementation PageCell1Controller
 
@@ -25,7 +27,7 @@
 }
 
 -(UIView *)addHeaderView{
-    UIImageView *header = [[UIImageView alloc] initWithFrame:(CGRect){{0, 0}, {ScreenW, 200}}];
+    UIImageView *header = [[UIImageView alloc] initWithFrame:(CGRect){{0, 0}, {self.view.bounds.size.width, 200}}];
     [header setImage:[UIImage imageNamed:@"bg"]];
     header.contentMode = UIViewContentModeScaleAspectFill;
     header.clipsToBounds = YES;

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		365CBC6224C6F632001F1EA9 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 365CBC6124C6F632001F1EA9 /* README.md */; };
+		365CBC6424C6F938001F1EA9 /* XXPageController.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 365CBC6324C6F938001F1EA9 /* XXPageController.podspec */; };
 		7E2687F320E5FB5A00908642 /* Parent2Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E2687F220E5FB5A00908642 /* Parent2Controller.m */; };
 		7E2687F620E5FB6C00908642 /* Parent3Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E2687F520E5FB6C00908642 /* Parent3Controller.m */; };
 		7E2687F920E5FB7A00908642 /* Parent4Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E2687F820E5FB7A00908642 /* Parent4Controller.m */; };
@@ -24,7 +26,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		7E18A6DF20E4C84500289C11 /* XXPageMenuHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XXPageMenuHeader.h; sourceTree = "<group>"; };
+		365CBC6124C6F632001F1EA9 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
+		365CBC6324C6F938001F1EA9 /* XXPageController.podspec */ = {isa = PBXFileReference; lastKnownFileType = file; path = XXPageController.podspec; sourceTree = SOURCE_ROOT; };
 		7E2687F120E5FB5A00908642 /* Parent2Controller.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Parent2Controller.h; sourceTree = "<group>"; };
 		7E2687F220E5FB5A00908642 /* Parent2Controller.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Parent2Controller.m; sourceTree = "<group>"; };
 		7E2687F420E5FB6C00908642 /* Parent3Controller.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Parent3Controller.h; sourceTree = "<group>"; };
@@ -83,9 +86,11 @@
 		C4F8F6F31C5F41270030181A /* XXPageController */ = {
 			isa = PBXGroup;
 			children = (
-				C4F8F70B1C5F41E70030181A /* XXPageCreater */,
+				C4F8F6F71C5F41270030181A /* AppDelegate.h */,
+				C4F8F6F81C5F41270030181A /* AppDelegate.m */,
 				C4F8F6FA1C5F41270030181A /* ViewController.h */,
 				C4F8F6FB1C5F41270030181A /* ViewController.m */,
+				C4F8F70B1C5F41E70030181A /* XXPageCreater */,
 				C4F8F7181C5F41FC0030181A /* ExampleController */,
 				C4F8F6F41C5F41270030181A /* Supporting Files */,
 			);
@@ -95,8 +100,8 @@
 		C4F8F6F41C5F41270030181A /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				C4F8F6F71C5F41270030181A /* AppDelegate.h */,
-				C4F8F6F81C5F41270030181A /* AppDelegate.m */,
+				365CBC6324C6F938001F1EA9 /* XXPageController.podspec */,
+				365CBC6124C6F632001F1EA9 /* README.md */,
 				C4F8F6FD1C5F41270030181A /* Main.storyboard */,
 				C4F8F7001C5F41270030181A /* Assets.xcassets */,
 				C4F8F7021C5F41270030181A /* LaunchScreen.storyboard */,
@@ -109,7 +114,6 @@
 		C4F8F70B1C5F41E70030181A /* XXPageCreater */ = {
 			isa = PBXGroup;
 			children = (
-				7E18A6DF20E4C84500289C11 /* XXPageMenuHeader.h */,
 				C4F8F7121C5F41E70030181A /* XXPageMenuController.h */,
 				C4F8F7131C5F41E70030181A /* XXPageMenuController.m */,
 			);
@@ -177,6 +181,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -195,8 +200,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				365CBC6424C6F938001F1EA9 /* XXPageController.podspec in Resources */,
 				C4F8F7041C5F41270030181A /* LaunchScreen.storyboard in Resources */,
 				C4F8F7011C5F41270030181A /* Assets.xcassets in Resources */,
+				365CBC6224C6F632001F1EA9 /* README.md in Resources */,
 				C4F8F6FF1C5F41270030181A /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

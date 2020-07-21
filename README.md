@@ -36,6 +36,32 @@ XXPageController *pageVc = [[XXPageController alloc] initWithTitles:@[@"QQ",@"�
 [self.navigationController pushViewController:pageVc animated:YES];
 ```
 
+在工程中实际使用时,可以灵活设置各属性:
+
+```Objective-C
+- (XXPageMenuController *)menuController {
+    if (!_menuController) {
+        _menuController = [[XXPageMenuController alloc] initWithTitles:self.pageTitles controllers:self.pageControllers onNavigationBar:NO];
+        //_menuController.lineColors = @[UIColorFromRGB(0x858899),FN_Blue_Color];
+        _menuController.lineColor = FN_Blue_Color;
+        _menuController.lineHeight = 4;
+        _menuController.lineStaticWidth = 6;
+        _menuController.titleColor = UIColorFromRGB(0x858899);
+        _menuController.titleSelectedColor = UIColorFromRGB(0x333333);
+        _menuController.titleFont = FNMediumFontSize(15);
+        _menuController.pageBarBgColor = [UIColor whiteColor];
+        _menuController.pageBarHeight = pageBarHeight;
+        _menuController.lineWidthType = LineWidthTypeStaticShort; ///<下划线长度取值类型
+        _menuController.lineScrollType = LineScrollTypeDynamicAnimation; ///<下划线在条目切换时的动态表现类型
+        _menuController.pageCellWidthType = PageCellWidthTypeWidthByStaticCount; ///<分页条目 cell 宽度取值类型
+        _menuController.pageTitleFontChangeType = PageTitleFontChangeTypeScrollEndAnimation; ///<分页滑动时标题字体大小改变方式
+        //因为这里是将pageMenuController添加到ParentController(self类)上的,所以要为pageMenuController设置父视图控制器
+        //[_menuController setSuperViewController:self];
+    }
+    return _menuController;
+}
+```
+
 ##### PS:几种不同方式展示的所有代码都在 demo 里的 `Viewcontroller` 类`didSelectRowAtIndexPath:`方法内:
 
 ```Objective-C
