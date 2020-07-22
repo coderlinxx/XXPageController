@@ -16,11 +16,11 @@ Pod::Spec.new do |spec|
   #
 
   spec.name         = "XXPageController"
-  spec.version      = "0.0.3"
+  spec.version      = "0.0.4"
   spec.summary      = "分页加载控制器."
 
   spec.description  = <<-DESC
-  iOS 端的分页标签快速加载控制器,带有多种 UI 滑动效果可定制
+  iOS 端的分页标签快速加载控制器, 带有多种 UI 滑动效果可定制
   DESC
 
   spec.homepage     = "https://github.com/coderlinxx/XXPageController"
@@ -29,8 +29,8 @@ Pod::Spec.new do |spec|
   spec.author             = { "林祥兴" => "inxxlin@gmail.com" }
   spec.platform     = :ios, "9.0"
   spec.source       = { :git => "https://github.com/coderlinxx/XXPageController.git", :tag => "#{spec.version}" }
-  spec.source_files  = "XXPageController/XXPageMenuController/*.{h,m}"
   
+  spec.source_files  = "XXPageController/XXPageMenuController/*.{h,m}"
   # spec.exclude_files = "Classes/Exclude"
   # spec.public_header_files = "Classes/**/*.h"
   # spec.resource  = "icon.png"
