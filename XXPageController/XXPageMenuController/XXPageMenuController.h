@@ -23,31 +23,29 @@ typedef NS_ENUM(NSInteger, LineWidthType) {
 };
 
 /**
- 下划线在条目切换时的动态表现类型
-
- - LineScrollTypeDynamicAnimation: 滑动即时的下划线动态动画
- - LineScrollTypeFinishedAnimation: 滑动完成后的下划线动态动画
- - LineScrollTypeFinishedLinear: 滑动完成后的下划线线性动画
- - LineScrollTypeDynamicLinear: 滑动即时的下划线线性动画
+ 分页条目 cell 宽度取值类型
+ 
+ - PageCellWidthTypeWithTitleLength: 根据 cell 标题文字长度取值
+ - PageCellWidthTypeSplitScreen: pageCell个数小于屏宽最大cell展示个数时,按个数平分屏宽
+ - PageCellWidthTypeWidthByStaticCount: 根据屏宽最大cell展示个数平分屏宽
  */
-typedef NS_ENUM(NSInteger, LineScrollType) {
-    LineScrollTypeDynamicAnimation = 0,
-    LineScrollTypeFinishedAnimation,
-    LineScrollTypeFinishedLinear,
-    LineScrollTypeDynamicLinear
+typedef NS_ENUM(NSInteger, PageCellWidthType) {
+    PageCellWidthTypeByTitleLength = 0,
+    PageCellWidthTypeSplitScreen,
+    PageCellWidthTypeWidthByStaticCount
 };
 
 /**
- 分页条目 cell 宽度取值类型
- 
- - PageCellWidthTypeSplitScreen: pageCell个数小于屏宽最大cell展示个数时,按个数平分屏宽
- - PageCellWidthTypeStaticCount: 根据屏宽最大cell展示个数平分屏宽
- - PageCellWidthTypeWithTitleLength: 根据 cell 标题文字长度取值
+ 下划线在条目切换时的动态表现类型
+
+ - LineScrollTypeDynamicAnimation: 滑动即时的下划线动态动画
+ - LineScrollTypeDynamicLinear: 滑动即时的下划线线性动画
+ - LineScrollTypeFinishedLinear: 滑动完成后的下划线线性动画
  */
-typedef NS_ENUM(NSInteger, PageCellWidthType) {
-    PageCellWidthTypeSplitScreen = 0,
-    PageCellWidthTypeWidthByStaticCount,
-    PageCellWidthTypeByTitleLength
+typedef NS_ENUM(NSInteger, LineScrollType) {
+    LineScrollTypeDynamicAnimation = 0,
+    LineScrollTypeDynamicLinear,
+    LineScrollTypeScrollEndLinear
 };
 
 /** 分页滑动时标题字体大小改变方式
@@ -87,8 +85,8 @@ typedef NS_ENUM(NSInteger, PageTitleColorChangeType) {
 @property (nonatomic,assign) CGFloat lineHeight;
 /** 下划线固定宽度: lineWidthType=LineWidthTypeStaticShort时设置,其他类型自动计算 */
 @property (nonatomic,assign) CGFloat lineStaticWidth;
-/** 分页工具条在可示区域的条目数量展示最大值: 在导航条上时默认值4,在一屏宽度上时默认值5 */
-@property (nonatomic,assign) NSInteger maxPagesCountInShowArea;
+/** 分页工具条在展示区域的条目数量展示最大值: 在导航条上时默认值4,在一屏宽度上时默认值5 */
+@property (nonatomic,assign) NSInteger maxPagesCountInPageShowArea;
 /** 下划线长度取值类型 */
 @property (nonatomic,assign) LineWidthType lineWidthType;
 /** 下划线在条目切换时的动态表现类型 */
@@ -103,13 +101,13 @@ typedef NS_ENUM(NSInteger, PageTitleColorChangeType) {
 @property (nonatomic,strong) UIColor *titleColor;
 /** 标题选中颜色(可不设置) */
 @property (nonatomic,strong) UIColor *titleSelectedColor;
-/** 标题字体 */
+/** 标题字体, default: [UIFont systemFontOfSize:15] */
 @property (nonatomic,strong) UIFont *titleFont;
-/** 标题选中字体(可不设置) */
+/** 标题选中字体(可不设置), default: [UIFont systemFontOfSize:20] */
 @property (nonatomic,strong) UIFont *titleSelectedFont;
 
 /** 默认选择的 index 位置 ,默认值为0*/
-- (void)moveToDefaultIndex:(NSInteger)index;
+@property (nonatomic,assign) NSInteger defaultIndex;
 
 /**
  创建分页控制器 : 自动创建全部控制器(方式一)

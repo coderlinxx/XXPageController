@@ -20,7 +20,22 @@
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
     self.title = NSStringFromClass(self.class);
-    NSArray *titles = @[@"0即时的",@"1下划线",@"2动态",@"3动画,",@"4根据",@"5文字长度",@"6动态",@"7决定",@"8下划线长度",@"9体育",@"10汽车",@"11房产",@"12旅游局",@"13教育",@"14时尚",@"15科技"];
+    NSArray *titles = @[
+        @"即时的",
+        @"下划线",
+        @"动态",
+        @"动画",
+        @"根据",
+        @"文字长度",
+        @"动态",
+        @"决定",
+        @"下划线长度",
+        @"体育",
+        @"汽车",
+        @"房产",
+        @"旅游局",
+        @"教育",
+    ];
     
     NSMutableArray *controllers = [NSMutableArray array];
     [titles enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -34,11 +49,15 @@
     pageMenuController.pageBarBgColor = [UIColor whiteColor];
     pageMenuController.pageBarHeight = 44;
     pageMenuController.lineWidthType = LineWidthTypeDynamic;
+//    pageMenuController.lineWidthType = LineWidthTypeStaticLong; ///<下划线长度取值类型
+    pageMenuController.lineScrollType = LineScrollTypeDynamicAnimation; ///<下划线在条目切换时的动态表现类型
+    pageMenuController.pageCellWidthType = PageCellWidthTypeByTitleLength; ///<分页条目 cell 宽度取值类型
+    pageMenuController.pageTitleFontChangeType = PageTitleFontChangeTypeScrolling; ///<分页滑动时标题字体大小改变方式
     //因为这里是将pageMenuController添加到ParentController(self类)上的,所以要为pageMenuController设置父视图控制器
     [pageMenuController setSuperViewController:self];
     
-    [pageMenuController moveToDefaultIndex:5];
-    
+    pageMenuController.defaultIndex = 5;
+
 }
 
 - (void)didReceiveMemoryWarning {

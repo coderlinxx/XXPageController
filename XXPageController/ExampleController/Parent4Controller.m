@@ -39,7 +39,7 @@
     //因为这里是将pageMenuController添加到ParentController(self类)上的,所以要为pageMenuController设置父视图控制器
     [pageMenuController setSuperViewController:self];
     
-    [pageMenuController moveToDefaultIndex:1];
+    pageMenuController.defaultIndex = 1;
 }
 
 - (void)didReceiveMemoryWarning {

@@ -119,7 +119,16 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     
-    NSArray *titles = @[@"0新闻",@"1体育",@"2汽车",@"3房产",@"4旅游局",@"5教育基地",@"6时尚",@"7科技"];
+    //NSArray *titles = @[@"新闻",@"体育体育体育",@"汽车",@"房产",@"旅游局",@"教育基地",@"时尚",@"科技科技科技"];
+    NSArray *titles = @[@"新闻",@"体育",@"汽车",@"房产",@"旅游局",@"教育基地",@"时尚",@"科技",@"小王打爱迪生",@"即时的",
+    @"下划线",
+    @"动态",
+    @"动画",
+    @"根据",
+    @"文字长度",
+    @"动态",
+    @"决定",
+    @"下划线长度"];
     NSArray *titles2 = @[@"0新闻",@"1体育",@"2汽车",@"3房产"];
 
     if (indexPath.section == 0) {
@@ -135,6 +144,8 @@
                     [controllersClass addObject:[PageCell2Controller class]];
                 }];
                 pageMenuController = [[XXPageMenuController alloc] initWithTitles:titles controllersClass:controllersClass onNavigationBar:YES];
+                
+                pageMenuController.pageCellWidthType = PageCellWidthTypeByTitleLength; ///<分页条目 cell 宽度取值类型
             }
                 break;
             case 1:
@@ -144,10 +155,18 @@
                     [controllers addObject:[PageCell1Controller new]];
                 }];
                 pageMenuController = [[XXPageMenuController alloc] initWithTitles:titles controllers:controllers onNavigationBar:NO];
-                pageMenuController.titleColor = [UIColor whiteColor];
-                pageMenuController.pageBarBgColor = [UIColor grayColor];
+                pageMenuController.titleColor = [UIColor grayColor];
+                pageMenuController.titleSelectedColor = [UIColor orangeColor];
+                pageMenuController.pageBarBgColor = [UIColor whiteColor];
                 pageMenuController.pageBarHeight = 44;
+                pageMenuController.titleSelectedFont = [UIFont systemFontOfSize:18];
                 pageMenuController.lineColor = [UIColor orangeColor];
+                pageMenuController.lineWidthType = LineWidthTypeDynamic; ///<下划线长度取值类型
+                pageMenuController.lineScrollType = LineScrollTypeDynamicAnimation; ///<下划线在条目切换时的动态表现类型
+                pageMenuController.pageCellWidthType = PageCellWidthTypeByTitleLength; ///<分页条目 cell 宽度取值类型
+                pageMenuController.pageTitleFontChangeType = PageTitleFontChangeTypeScrolling; ///<分页滑动时标题字体大小改变方式
+                
+                pageMenuController.defaultIndex = 5;
             }
                 break;
             case 2:
