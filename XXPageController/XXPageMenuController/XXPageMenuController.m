@@ -10,10 +10,6 @@
 
 #define kScreenWidth [[UIScreen mainScreen] bounds].size.width
 #define kScreenHeight [[UIScreen mainScreen] bounds].size.height
-#define kNavAndStatus_Height ([[UIApplication sharedApplication] statusBarFrame].size.height + 44)
-#define isIPhoneX (CGSizeEqualToSize(CGSizeMake(375.f, 812.f), [UIScreen mainScreen].bounds.size) || CGSizeEqualToSize(CGSizeMake(812.f, 375.f), [UIScreen mainScreen].bounds.size)) //是否是iphoneX
-//底部安全高度
-#define kBottom_Safe_Height (isIPhoneX ? 34 : 0)
 
 @interface PopEnabeldCollectionView : UICollectionView
 @end
@@ -50,6 +46,10 @@
         [_titleLabel addGestureRecognizer:tap];
         [self addSubview:_titleLabel];
         
+        
+        
+        
+        
         _titleBtn = [[UIButton alloc] initWithFrame:self.bounds];
         _titleBtn.contentMode = UIViewContentModeCenter;
         _titleBtn.titleEdgeInsets = UIEdgeInsetsMake(0, 3, 0, 0);
@@ -72,38 +72,7 @@
 
 @end
 
-//@interface ItemCell : UICollectionViewCell
-//@property (nonatomic, strong) UILabel *titleLabel;
-//@property (nonatomic, strong) UIButton *titleBtn;
-//@end
-//
-//@implementation ItemCell
-//- (instancetype)initWithFrame:(CGRect)frame {
-//    self = [super initWithFrame:frame];
-//    if (self) {
-//        self.backgroundColor = [UIColor clearColor];
-//        _titleLabel = [[UILabel alloc] initWithFrame:self.bounds];
-//        _titleLabel.textAlignment = NSTextAlignmentCenter;
-//        _titleLabel.lineBreakMode = NSLineBreakByCharWrapping;
-//        _titleLabel.backgroundColor = [UIColor greenColor];
-//        [self.contentView addSubview:_titleLabel];
-//
-//        _titleBtn = [[UIButton alloc] initWithFrame:self.bounds];
-//        _titleBtn.contentMode = UIViewContentModeCenter;
-//        _titleBtn.titleEdgeInsets = UIEdgeInsetsMake(0, 3, 0, 0);
-//        _titleBtn.imageEdgeInsets = UIEdgeInsetsMake(1, -3, 0, 0);
-//        CGSize size = CGSizeMake(15, 15);
-//        _titleBtn.imageView.frame = (CGRect){{0,0},size};
-//        _titleBtn.titleLabel.lineBreakMode = NSLineBreakByCharWrapping;
-//        _titleBtn.userInteractionEnabled = NO;
-//        [self.contentView addSubview:_titleBtn];
-//    }
-//    return self;
-//}
-//@end
-
 @interface XXPageMenuController ()<UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,XXPageItemCellDelegate>
-
 /** 分页条滑动的下滑线 */
 @property (readonly, nonatomic, strong) UIView *line;
 /** 下滑线宽度 */
@@ -111,11 +80,7 @@
 /** 是否将分页工具条创建在NavigationBar上 */
 @property (nonatomic, assign) BOOL onNavigationBar;
 /** 分页工具条 */
-//@property (nonatomic, weak) UICollectionView *collectionPage;
-
 @property (nonatomic, strong) UIScrollView *scrollViewPage;
-/** 存放Cell的唯一标示符,这里collectionPage的数据量很少,为防止复用data/frame异常,处理为不复用的形式,相当于一个便捷的父类 UIScrollView */
-@property (nonatomic, strong) NSMutableDictionary *cellidDic;
 /** 主collection视图 */
 @property (nonatomic, weak) PopEnabeldCollectionView *collectionMain;
 /** 分页工具条的总宽度 */
@@ -130,18 +95,13 @@
 @property (nonatomic, strong) NSArray *controllersClass;
 @property (nonatomic, strong) NSArray *controllers;
 @property (nonatomic, strong) NSArray *icons;
-
 /** 当前选中的 index 位置 */
 @property (nonatomic, assign) NSInteger selectedIndex;
 /** 点击didSelectItemAtIndexPath:方法的标记 */
 @property (nonatomic,assign) BOOL didSelectCollectionPageItem;
-
-//@property (nonatomic, strong) ItemCell *lastTimeCell;
-
 @end
 
 #define kAnimateDuration 0.3
-static NSString *pageBarCell = @"inxx_pageBarCell";
 static NSString *mainCell = @"inxx_mainCell";
 
 @implementation XXPageMenuController
@@ -197,20 +157,6 @@ static NSString *mainCell = @"inxx_mainCell";
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    //将XXPageMenuController对象的view被添加到另一个控制器的view上时就会发生if内的情况
-    if (self.nextResponder &&
-        self.view.superview &&
-        self.view.superview == self.nextResponder &&
-        [self.view.superview.nextResponder isKindOfClass:[UIViewController class]]
-        ) {
-        UIViewController *controller = (UIViewController *)self.view.superview.nextResponder;
-        UIViewController *controller2 = self.parentViewController;
-        //解决一个view上面放两个不同的collectionview的显示冲突
-        controller.automaticallyAdjustsScrollViewInsets = NO;
-    } else {
-        self.automaticallyAdjustsScrollViewInsets = NO;
-    }
-    
     //1. 更新下划线的frame
     [self updateLineFrameWithIndex:self.selectedIndex];
     //2. 更新collection page的显示index 位置
@@ -223,42 +169,25 @@ static NSString *mainCell = @"inxx_mainCell";
     [super viewDidAppear:animated];
     //FIXME: iOS 11前后在_onNavigationBar上面时,子视图出现的顺序是不一样的! iOS11前需要在UINavigationController的视图显示以后,子视图才会显示!  iOS 11之后可能修复了这个bug
     if (_onNavigationBar && [UIDevice currentDevice].systemVersion.doubleValue<=11.0 && self.selectedIndex >= _maxPagesCountInPageShowArea) {
-//        [self.collectionPage scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:self.selectedIndex inSection:0] atScrollPosition:UICollectionViewScrollPositionLeft animated:NO];
         [self updateCurrentScrollViewPageContentOffsetByIndex:self.selectedIndex];
     }
 }
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.view.backgroundColor = [UIColor clearColor];
+- (void)loadView {
+    [super loadView];
     [self configProperties];
-//    [self addCollectionPage];
     [self addScrollViewPage];
     [self addCollectionMain];
     [self addPageBottomLine];
-    
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.backgroundColor = [UIColor whiteColor];
     [self addObserver:self forKeyPath:@"selectedIndex" options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:nil];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
-//    if ( object == self && [keyPath isEqualToString:@"selectedIndex"]) {
-//        NSInteger oldIndex = [[change objectForKey:NSKeyValueChangeOldKey] integerValue];
-//        NSInteger newIndex = [[change objectForKey:NSKeyValueChangeNewKey] integerValue];
-//        NSIndexPath *oldIndexPath = [NSIndexPath indexPathForRow:oldIndex inSection:0];
-//        NSIndexPath *newIndexPath = [NSIndexPath indexPathForRow:newIndex inSection:0];
-//        ItemCell *oldCell = (ItemCell *)[self.collectionPage cellForItemAtIndexPath:oldIndexPath];
-//        ItemCell *newCell = (ItemCell *)[self.collectionPage cellForItemAtIndexPath:newIndexPath];
-//        if (newIndex != oldIndex) {
-//            //FIXME: 此处由于 cell 的重用/缓存池机制, 当两个 cell 切换位置过远, 超过一屏时, oldCell不显示在当前屏幕, 会进入缓存池, 取到的值是 nil, 需要特殊处理来让我们准确取到这个 cell. 而在-scrollViewDidScroll:中的此取 cell 方法不会发生此种情况,因为都是相邻的两个 cell 间的滑动
-//            if (oldCell == nil) {
-//                oldCell = _lastTimeCell;
-//            }
-//            [self reloadCollectionPageCell:oldCell index:oldIndex selected:NO];
-//            [self reloadCollectionPageCell:newCell index:newIndex selected:YES];
-//        }
-//        _lastTimeCell = newCell; //赋值
-//    }
-    
     if ([keyPath isEqualToString:@"selectedIndex"]) {
         NSInteger oldIndex = [[change objectForKey:NSKeyValueChangeOldKey] integerValue];
         NSInteger newIndex = [[change objectForKey:NSKeyValueChangeNewKey] integerValue];
@@ -270,43 +199,43 @@ static NSString *mainCell = @"inxx_mainCell";
             [self reloadCollectionPageCell:newCell index:newIndex selected:YES];
         }
     }
-
-    
 }
 
 /// 刷新 CollectionPage的Cell 数据
 /// @param selected 待刷新cell是否被选中
 - (void)reloadCollectionPageCell:(XXPageItemCell *)cell index:(NSInteger)index selected:(BOOL)selected {
+    
+    UILabel *titleLabel = nil;
     if (self.icons) {
         cell.titleLabel.hidden = YES; cell.titleBtn.hidden = NO;
-        [cell.titleBtn setTitle:self.titles[index] forState:UIControlStateNormal];
+        titleLabel = cell.titleBtn.titleLabel;
         [cell.titleBtn setImage:[UIImage imageNamed:self.icons[index]] forState:UIControlStateNormal];
-        [cell.titleBtn setTitleColor:(selected ? _titleSelectedColor : _titleColor) forState:UIControlStateNormal];
         [cell.titleBtn.titleLabel setFont:(selected ? _titleSelectedFont : _titleFont)];
     } else {
         cell.titleLabel.hidden = NO; cell.titleBtn.hidden = YES;
-        [cell.titleLabel setText:self.titles[index]];
-        [cell.titleLabel setTextColor:(selected ? _titleSelectedColor : _titleColor)];
+        titleLabel = cell.titleLabel;
         //title font 的改变方式: 滑动结束动画改变 || 点击didSelectItemAtIndexPath:方法
         if (_pageTitleFontChangeType == PageTitleFontChangeTypeScrollEndAnimation || _didSelectCollectionPageItem) {
             CGFloat scale = selected ? _titleSelectedFont.pointSize/_titleFont.pointSize : _titleFont.pointSize/_titleSelectedFont.pointSize;
             [UIView animateWithDuration:kAnimateDuration animations:^{
-                cell.titleLabel.transform = CGAffineTransformMakeScale(scale, scale);
+                titleLabel.transform = CGAffineTransformMakeScale(scale, scale);
             } completion:^(BOOL finished) {
                 //缩放结束后重置transform, 并设置当前对应的字体大小. 这样就能避免transform从小到大时字体模糊
-                cell.titleLabel.transform = CGAffineTransformIdentity;
-                [cell.titleLabel setFont:(selected ? _titleSelectedFont : _titleFont)];
+                titleLabel.transform = CGAffineTransformIdentity;
+                [titleLabel setFont:(selected ? _titleSelectedFont : _titleFont)];
             }];
         } else {
-            [cell.titleLabel setFont:(selected ? _titleSelectedFont : _titleFont)];
+            [titleLabel setFont:(selected ? _titleSelectedFont : _titleFont)];
         }
     }
+    
+    [titleLabel setText:self.titles[index]];
+    [titleLabel setTextColor:(selected ? _titleSelectedColor : _titleColor)];
 }
 
 - (void)configProperties {
     
     //init default value
-    _cellidDic = [NSMutableDictionary dictionary];
     _pageBarHeight = _onNavigationBar ? 44 : (_pageBarHeight ?: 44);
     _pageBarBgColor = _pageBarBgColor ? : [UIColor whiteColor];
     _lineColor = _lineColor ? : [UIColor blueColor];
@@ -335,6 +264,9 @@ static NSString *mainCell = @"inxx_mainCell";
             CGFloat width1 = title.length * _titleFont.pointSize + 25;
             CGFloat width2 = title.length * _titleSelectedFont.pointSize; //防止有少数过长标题时滑动异常
             CGFloat width = MAX(width1, width2);
+            if (self.icons) {
+                width += 24;
+            }
             sumWidth += width;
             if (sumWidth < _pageMenuW) {
                 showCount++;
@@ -347,47 +279,9 @@ static NSString *mainCell = @"inxx_mainCell";
     self.selectedIndex = _defaultIndex;
 }
 
-//- (void)addCollectionPage {
-//
-//    UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
-//    layout.minimumLineSpacing = 0;
-//    layout.minimumInteritemSpacing = 0;
-//    layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-//    if (_pageCellWidthType != PageCellWidthTypeByTitleLength) {
-//        layout.itemSize = CGSizeMake(_pageCellW, _pageBarHeight);
-//    }
-//    CGFloat pageMenuY = _onNavigationBar ? 0 : kNavAndStatus_Height;
-//    CGRect frame = CGRectMake(0, pageMenuY, _pageMenuW, _pageBarHeight);
-//    UICollectionView *collection = [[UICollectionView alloc] initWithFrame:frame collectionViewLayout:layout];
-//    collection.dataSource = self;
-//    collection.delegate = self;
-//    collection.pagingEnabled = YES;
-//    collection.scrollEnabled = YES;
-//    collection.bounces = YES;   //禁止左右弹簧拉伸
-//    collection.showsHorizontalScrollIndicator = NO;
-//    //[collection registerClass:[ItemCell class] forCellWithReuseIdentifier:pageBarCell];
-//    self.collectionPage = collection;
-//
-//    if (_onNavigationBar) {
-//        collection.backgroundColor = [UIColor clearColor];  //位于导航条时背景色处理为透明色,不公开属性
-//        if (self.parentViewController && ![self.parentViewController isKindOfClass:[UINavigationController class]]) {
-//            self.parentViewController.navigationItem.titleView = self.collectionPage;
-//        } else {
-//            self.navigationItem.titleView = self.collectionPage;
-//        }
-//    } else {
-//        collection.backgroundColor = _pageBarBgColor;
-//        [self.view addSubview:self.collectionPage];
-//
-//        UIView *borderline = [[UIView alloc] initWithFrame:CGRectMake(0, collection.bounds.size.height - 0.5, _pageCellW*_titles.count, 0.5)];
-//        borderline.backgroundColor = [UIColor colorWithWhite:0.75 alpha:0.5];
-//        //[collection addSubview:borderline];
-//    }
-//
-//}
-
 - (void)addScrollViewPage {
-    CGFloat pageMenuY = _onNavigationBar ? 0 : kNavAndStatus_Height;
+    CGFloat navigationBarMaxY = CGRectGetMaxY(self.navigationController.navigationBar.frame);
+    CGFloat pageMenuY = _onNavigationBar ? 0 : navigationBarMaxY;
     CGRect frame = CGRectMake(0, pageMenuY, _pageMenuW, _pageBarHeight);
     UIScrollView *scrollViewPage = [[UIScrollView alloc] initWithFrame:frame];
     scrollViewPage.showsVerticalScrollIndicator = NO;
@@ -447,19 +341,16 @@ static NSString *mainCell = @"inxx_mainCell";
 }
 
 
-
 - (void)addPageBottomLine {
     _line = [UIView new];
     _line.backgroundColor = _lineColor;
     _line.clipsToBounds = YES;
     _line.layer.cornerRadius = _lineHeight/2;
-//    [self.collectionPage addSubview:_line];
-//    [self.collectionPage bringSubviewToFront:_line];
-    
     [self.scrollViewPage addSubview:_line];
     [self.scrollViewPage bringSubviewToFront:_line];
 }
 
+CGRect childFrame;
 - (void)addCollectionMain {
     
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
@@ -467,20 +358,11 @@ static NSString *mainCell = @"inxx_mainCell";
     layout.minimumInteritemSpacing = 0;
     layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
     
-    CGRect frame;
-    if (_onNavigationBar) {
-        //分页条 onNavigationBar && isIPhoneX && parentViewController &&  parentViewController不是NavigationController类型
-        if (isIPhoneX && self.parentViewController && ![self.parentViewController isKindOfClass:[UINavigationController class]]) {
-            layout.itemSize = CGSizeMake(kScreenWidth, kScreenHeight - kNavAndStatus_Height - kBottom_Safe_Height);
-        } else {
-            layout.itemSize = CGSizeMake(kScreenWidth, kScreenHeight - kNavAndStatus_Height);
-        }
-        frame = CGRectMake(0, kNavAndStatus_Height, layout.itemSize.width, layout.itemSize.height);
-    } else {
-        layout.itemSize = CGSizeMake(kScreenWidth, kScreenHeight - kNavAndStatus_Height- _pageBarHeight);//kBottom_Safe_Height
-        frame = CGRectMake(0, CGRectGetMaxY(self.scrollViewPage.frame),  layout.itemSize.width, layout.itemSize.height);
-    }
-    
+    CGFloat navigationBarMaxY = CGRectGetMaxY(self.navigationController.navigationBar.frame);
+    CGFloat y = _onNavigationBar ? navigationBarMaxY : navigationBarMaxY + _pageBarHeight;
+    layout.itemSize = CGSizeMake(kScreenWidth, kScreenHeight - y);
+    CGRect frame = CGRectMake(0, y, layout.itemSize.width, layout.itemSize.height);
+
     PopEnabeldCollectionView *collection = [[PopEnabeldCollectionView alloc] initWithFrame:frame collectionViewLayout:layout];
     collection.backgroundColor = [UIColor whiteColor];
     collection.dataSource = self;
@@ -493,116 +375,22 @@ static NSString *mainCell = @"inxx_mainCell";
     self.collectionMain = collection;
     [self.view addSubview:collection];
     [self.view bringSubviewToFront:self.collectionMain];
+    
+    childFrame = frame;
+    for (UIViewController *childVc in self.controllers) {
+        childFrame.origin.y = 0;
+        childVc.view.frame = childFrame;
+    }
 }
-
-#pragma mark - UICollectionViewDelegateFlowLayout
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-//    if (collectionView == self.collectionPage) {
-//        if (_pageCellWidthType == PageCellWidthTypeByTitleLength) {
-//            CGFloat width = [_pageCellWs[indexPath.item] floatValue];
-//            return CGSizeMake(width, _pageBarHeight);
-//        }
-//        return CGSizeMake(_pageCellW, _pageBarHeight);
-//    } else {
-        if (_onNavigationBar) {
-            return CGSizeMake(kScreenWidth, kScreenHeight - kNavAndStatus_Height - kBottom_Safe_Height);
-        }
-        return CGSizeMake(kScreenWidth, kScreenHeight - kNavAndStatus_Height- _pageBarHeight);//kBottom_Safe_Height
-//    }
-}
-
-
-#pragma mark - UICollectionViewDataSource && UICollectionViewDelegate
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     return self.titles.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    
-//    if (collectionView == self.collectionPage) {
-//        // 每次先从字典中根据IndexPath取出唯一标识符
-//        NSString *identifier = [_cellidDic objectForKey:[NSString stringWithFormat:@"%@", indexPath]];
-//        // 如果取出的唯一标示符不存在，则初始化唯一标示符，并将其存入字典中，对应唯一标示符注册Cell
-//        if (identifier == nil) {
-//            identifier = [NSString stringWithFormat:@"%@%@", pageBarCell, [NSString stringWithFormat:@"%@", indexPath]];
-//            [_cellidDic setValue:identifier forKey:[NSString stringWithFormat:@"%@", indexPath]];
-//            // 注册Cell
-//            [collectionView registerClass:[ItemCell class]  forCellWithReuseIdentifier:identifier];
-//        }
-//        ItemCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
-//
-//        BOOL selected = (indexPath.row == self.selectedIndex);  //是否被选中
-//        if (selected) {
-//            _lastTimeCell = cell; //赋值
-//        }
-//
-//        if (self.icons) {
-//            cell.titleLabel.hidden = YES; cell.titleBtn.hidden = NO;
-//            [cell.titleBtn setTitle:self.titles[indexPath.row] forState:UIControlStateNormal];
-//            [cell.titleBtn setImage:[UIImage imageNamed:self.icons[indexPath.row]] forState:UIControlStateNormal];
-//            [cell.titleBtn setTitleColor:(selected ? _titleSelectedColor : _titleColor) forState:UIControlStateNormal];
-//            [cell.titleBtn.titleLabel setFont:(selected ? _titleSelectedFont : _titleFont)];
-//        } else {
-//            cell.titleLabel.hidden = NO; cell.titleBtn.hidden = YES;
-//            [cell.titleLabel setText:self.titles[indexPath.row]];
-//            [cell.titleLabel setTextColor:(selected ? _titleSelectedColor : _titleColor)];
-//            [cell.titleLabel setFont:(selected ? _titleSelectedFont : _titleFont)];
-//        }
-//
-//        return cell;
-//    }
-//    else
-//    {
-        UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:mainCell forIndexPath:indexPath];
-        [cell.contentView addSubview:((UIViewController *)self.controllers[indexPath.row]).view];
-        return cell;
-//    }
-}
-
-- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    
-//    if (collectionView == self.collectionPage) {  //self.collectionMain的点击不用判断,会被具体视图所遮挡
-//
-//        _didSelectCollectionPageItem = YES;
-//
-//        BOOL needReset = NO;
-//        LineScrollType lineScrollType = _lineScrollType;
-//        PageTitleFontChangeType titleFontChangeType = _pageTitleFontChangeType;
-//        PageTitleColorChangeType titleColorChangeType = _pageTitleColorChangeType;
-//        if ((_lineScrollType != LineScrollTypeScrollEndLinear)) {
-//            _lineScrollType = LineScrollTypeScrollEndLinear;
-//            needReset = YES;
-//        }
-//        if (_pageTitleFontChangeType != PageTitleFontChangeTypeScrollEnd) {
-//            _pageTitleFontChangeType = PageTitleFontChangeTypeScrollEnd;
-//            needReset = YES;
-//        }
-//        if (_pageTitleColorChangeType != PageTitleColorChangeTypeScrollEnd) {
-//            _pageTitleColorChangeType = PageTitleColorChangeTypeScrollEnd;
-//            needReset = YES;
-//        }
-//
-//        [UIView animateWithDuration:kAnimateDuration animations:^{
-//            //ABS(self.selectedIndex - indexPath.item)>1 表示跨越至少 2 个 index 移动
-//            [self updateLineFrameWithIndex:indexPath.row] ;
-//        } completion:^(BOOL finished) {
-//            if (needReset) { //复位
-//                _lineScrollType = lineScrollType;
-//                _pageTitleFontChangeType = titleFontChangeType;
-//                _pageTitleColorChangeType = titleColorChangeType;
-//            }
-//            _didSelectCollectionPageItem = NO;
-//        }];
-//
-//        NSInteger index = _maxPagesCountInPageShowArea - 2;
-//        if (indexPath.row >= index) {
-//            [self.collectionPage scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row - index inSection:0] atScrollPosition:UICollectionViewScrollPositionLeft animated:YES];
-//        }
-//
-//        [self.collectionMain scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row inSection:0] atScrollPosition:UICollectionViewScrollPositionLeft animated:YES];
-//    }
-    
+    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:mainCell forIndexPath:indexPath];
+    [cell.contentView addSubview:((UIViewController *)self.controllers[indexPath.row]).view];
+    return cell;
 }
 
 #pragma mark - XXPageItemCellDelegate
@@ -675,7 +463,7 @@ static float oldOffsetX;
         CGFloat changedW;  ///< line动态改变的宽度
 
         CGFloat centerX; ///< 线的实时滑动中心
-        NSLog(@"scrollRatio - %.1f",scrollRatio);
+        //NSLog(@"scrollRatio - %.1f",scrollRatio);
         BOOL toLeft = (x > oldOffsetX);
         oldOffsetX = x;
         if (toLeft) {
@@ -753,13 +541,6 @@ static float oldOffsetX;
     //创建通用变量
     int pageIndex = ABS(x) / kScreenWidth;
     CGFloat xInScreen = x-kScreenWidth*pageIndex;  //一屏内的位移距离
-//    NSIndexPath *oldIndexPath = [NSIndexPath indexPathForRow:pageIndex inSection:0];
-//    NSIndexPath *newIndexPath = [NSIndexPath indexPathForRow:pageIndex+1 inSection:0];
-//    ItemCell *oldCell = (ItemCell *)[self.collectionPage cellForItemAtIndexPath:oldIndexPath];
-//    ItemCell *newCell = (ItemCell *)[self.collectionPage cellForItemAtIndexPath:newIndexPath];
-//    if (newCell == nil) {
-//        newCell = _lastTimeCell;
-//    }
     
     XXPageItemCell *oldCell = _pageCells[pageIndex];
     XXPageItemCell *newCell = nil;
@@ -776,8 +557,7 @@ static float oldOffsetX;
         //oldCell.titleLabel.font = [UIFont fontWithDescriptor:oldCell.titleLabel.font.fontDescriptor size:_titleSelectedFont.pointSize-fontRuntimeDifferenceSize];
         //newCell.titleLabel.font = [UIFont fontWithDescriptor:newCell.titleLabel.font.fontDescriptor size:_titleFont.pointSize+fontRuntimeDifferenceSize];
         
-        //working中的 2 个分页标题实时属性在滑动时的稳定防抖动效果
-        //transform形变防抖动处理
+        //transform形变稳定防抖动处理
         //避免transform从小到大时字体模糊: 先把font设置为缩放的最大值，再缩小到最小值，最后根据当前的titleLabelZoomScale值，进行缩放更新
         newCell.titleLabel.font = _titleSelectedFont;
         oldCell.titleLabel.font = _titleSelectedFont;
@@ -786,16 +566,6 @@ static float oldOffsetX;
         CGFloat downRatio = (_titleSelectedFont.pointSize-fontRuntimeDifferenceSize)/_titleFont.pointSize;
         newCell.titleLabel.transform = CGAffineTransformMakeScale(baseScale*upRatio, baseScale*upRatio);
         oldCell.titleLabel.transform = CGAffineTransformMakeScale(baseScale*downRatio, baseScale*downRatio);
-        
-        //FIXME: 防止 cell 在复用时取到未复位的 cell
-//        for (ItemCell *cell in self.collectionPage.visibleCells) {
-//            NSInteger row = [self.collectionPage indexPathForCell:cell].row;
-//            if (row != pageIndex && row != pageIndex+1) {
-//                cell.titleLabel.transform = CGAffineTransformIdentity;
-//                cell.titleLabel.font = _titleFont;
-//            }
-//        }
-        
         
         [_pageCells enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull view, NSUInteger idx, BOOL * _Nonnull stop) {
             if ([view isKindOfClass:[XXPageItemCell class]]) {
@@ -821,7 +591,6 @@ static float oldOffsetX;
         CGFloat runingred1 = [rgba1[0] floatValue] - diffR;
         CGFloat runinGreen1 = [rgba1[1] floatValue] - diffG;
         CGFloat runingBlue1 = [rgba1[2] floatValue] - diffB;
-        //colorWithRed:red/255.0f green:green/255.0f blue:blue/255.0f 是错误写法,原色值里面已经包含了  x/255.0 的处理
         UIColor *runtimeColor0 = [UIColor colorWithRed:runingRed0 green:runingGreen0 blue:runingBlue0 alpha:1.0];
         UIColor *runtimeColor1 = [UIColor colorWithRed:runingred1 green:runinGreen1 blue:runingBlue1 alpha:1.0];
         oldCell.titleLabel.textColor = runtimeColor1;
@@ -831,10 +600,7 @@ static float oldOffsetX;
 
 /** 系统API获取UIColor的RGBA值 */
 - (NSArray *)getRGBValueFromColor:(UIColor *)color {
-    CGFloat red = 0.0;
-    CGFloat green = 0.0;
-    CGFloat blue = 0.0;
-    CGFloat alpha = 0.0;
+    CGFloat red = 0.0, green = 0.0, blue = 0.0, alpha = 0.0;
     [color getRed:&red green:&green blue:&blue alpha:&alpha];
     return @[@(red), @(green), @(blue), @(alpha)];
 }
@@ -844,80 +610,52 @@ static float oldOffsetX;
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
     
     if (_didSelectCollectionPageItem) return;
-
-    CGFloat x = scrollView.contentOffset.x ;
-    int index = (x + kScreenWidth*0.5) / kScreenWidth;         //滑动切换基准选择: kScreenWidth*0.5(半屏)
     
-    if (scrollView == self.collectionMain && _lineScrollType == LineScrollTypeScrollEndLinear) {
-        [UIView animateWithDuration:kAnimateDuration animations:^{
-            [self updateLineFrameWithIndex:index];
-        }];
-    }
-    
-    if (scrollView != self.scrollViewPage) {
-        [self updateCurrentScrollViewPageContentOffsetByIndex:index];
-    }
-    
-    if (_pageTitleFontChangeType == PageTitleFontChangeTypeScrolling && scrollView == self.collectionMain) {
-        //FIXME: 防止 cell 在复用时取到未复位的 cell
-        int pageIndex = ABS(x) / kScreenWidth;
-//        for (ItemCell *cell in self.collectionPage.visibleCells) {
-//            NSInteger row = [self.collectionPage indexPathForCell:cell].row;
-//            if (row != pageIndex) {
-//                cell.titleLabel.transform = CGAffineTransformIdentity;
-//                cell.titleLabel.font = _titleFont;
-//            }
-//        }
+    if (scrollView == _collectionMain) {
         
-        [_pageCells enumerateObjectsUsingBlock:^(__kindof XXPageItemCell * _Nonnull cell, NSUInteger idx, BOOL * _Nonnull stop) {
-            if (idx != pageIndex) {
-                cell.titleLabel.transform = CGAffineTransformIdentity;
-                cell.titleLabel.font = _titleFont;
-            }
-        }];
+        CGFloat x = scrollView.contentOffset.x ;
+        int index = (x + kScreenWidth*0.5) / kScreenWidth;         //滑动切换基准选择: kScreenWidth*0.5(半屏)
+        
+        // ScrollViewPage 处理偏移:setContentOffset
+        [self updateCurrentScrollViewPageContentOffsetByIndex:index];
+        
+        // 下划线线性动画
+        if ( _lineScrollType == LineScrollTypeScrollEndLinear) {
+            [UIView animateWithDuration:kAnimateDuration animations:^{
+                [self updateLineFrameWithIndex:index];
+            }];
+        }
+        
+        if (_pageTitleFontChangeType == PageTitleFontChangeTypeScrolling) {
+            //FIXME: 防止 cell 在复用时取到未复位的 cell
+            int pageIndex = ABS(x) / kScreenWidth;
+            [_pageCells enumerateObjectsUsingBlock:^(__kindof XXPageItemCell * _Nonnull cell, NSUInteger idx, BOOL * _Nonnull stop) {
+                if (idx != pageIndex) {
+                    cell.titleLabel.transform = CGAffineTransformIdentity;
+                    cell.titleLabel.font = _titleFont;
+                }
+            }];
+        }
         
     }
     
 }
 
 
-/// 更新当前使用的分页ScrollView偏移量
+/// 更新当前使用的分页ScrollView偏移量,复现UICollectionView滑动到view边缘处理的大致流程
 /// @param index 当前位置
 - (void)updateCurrentScrollViewPageContentOffsetByIndex:(NSInteger)index {
-    //用collectionPage时的操作
-//    if (self.collectionPage) {
-//        NSInteger needScrollIndex = _maxPagesCountInPageShowArea - 2;
-//        if (index >= needScrollIndex) {
-//            [self.collectionPage scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:index - needScrollIndex inSection:0] atScrollPosition:UICollectionViewScrollPositionLeft animated:YES];
-//        }
-//    } else {
-        ///< 复现UICollectionView滑动边缘处理的大致流程
-        NSArray *currentArray = [_pageCellWs subarrayWithRange:NSMakeRange(0, index)];
-        CGFloat currentOffX = [[currentArray valueForKeyPath:@"@sum.floatValue"] floatValue]; //↑
-        CGFloat allOffX = [[_pageCellWs valueForKeyPath:@"@sum.floatValue"] floatValue]; // -
-//        if (currentOffX > kScreenWidth*0.5) {
-//            currentOffX  = currentOffX - kScreenWidth*0.5; //防止滑动到最左边分页条继续左滑的异常
-//            if (currentOffX <= allOffX-kScreenWidth) {
-//                [self.scrollViewPage setContentOffset:CGPointMake(currentOffX, 0) animated:YES];
-//            } else {
-//                [self.scrollViewPage setContentOffset:CGPointMake(allOffX-kScreenWidth, 0) animated:YES];
-//            }
-//        } else {
-//            [self.scrollViewPage setContentOffset:CGPointMake(0, 0) animated:YES];
-//        }
-    
-    CGFloat likeScreenWidth = _pageMenuW; //考虑进去咋 navbar 上的情况
-    
-    if (currentOffX < likeScreenWidth*0.5) {
+    NSArray *currentArray = [_pageCellWs subarrayWithRange:NSMakeRange(0, index)];
+    CGFloat currentOffX = [[currentArray valueForKeyPath:@"@sum.floatValue"] floatValue]; //↑
+    CGFloat contentWidth = [[_pageCellWs valueForKeyPath:@"@sum.floatValue"] floatValue]; // -
+    if (contentWidth <= _pageMenuW) return; //contentSize宽度小于_pageMenuW时,不偏移
+    if (currentOffX < _pageMenuW*0.5) {
         [self.scrollViewPage setContentOffset:CGPointMake(0, 0) animated:YES];
+    } else if (currentOffX >= contentWidth-_pageMenuW*0.6) {
+        [self.scrollViewPage setContentOffset:CGPointMake(contentWidth-_pageMenuW, 0) animated:YES];
     } else {
-        if (currentOffX >= allOffX-likeScreenWidth*0.5) {
-            [self.scrollViewPage setContentOffset:CGPointMake(allOffX-likeScreenWidth, 0) animated:YES];
-        } else {
-            [self.scrollViewPage setContentOffset:CGPointMake(currentOffX-likeScreenWidth*0.5, 0) animated:YES];
-        }
+        [self.scrollViewPage setContentOffset:CGPointMake(currentOffX-_pageMenuW*0.4, 0) animated:YES];
     }
-//    }
 }
 
 /** 更新/设置 下划线的 frame */
