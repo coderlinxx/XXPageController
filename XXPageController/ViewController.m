@@ -141,7 +141,7 @@
             {
                 NSMutableArray *controllersClass = [NSMutableArray array];
                 [titles enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                    [controllersClass addObject:[PageCell2Controller class]];
+                    [controllersClass addObject:[PageCell1Controller class]];
                 }];
                 pageMenuController = [[XXPageMenuController alloc] initWithTitles:titles controllersClass:controllersClass onNavigationBar:YES];
                 
@@ -152,7 +152,7 @@
             {
                 NSMutableArray *controllers = [NSMutableArray array];
                 [titles enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                    [controllers addObject:[PageCell1Controller new]];
+                    [controllers addObject:[PageCell2Controller new]];
                 }];
                 pageMenuController = [[XXPageMenuController alloc] initWithTitles:titles controllers:controllers onNavigationBar:NO];
                 pageMenuController.titleColor = [UIColor grayColor];
@@ -171,12 +171,12 @@
                 break;
             case 2:
             {
-                pageMenuController = [[XXPageMenuController alloc] initWithTitles:titles2 controllersClass:@[[PageCell2Controller class],[PageCell2Controller class],[PageCell2Controller class],[PageCell2Controller class]] onNavigationBar:YES];
+                pageMenuController = [[XXPageMenuController alloc] initWithTitles:titles2 controllersClass:@[[PageCell1Controller class],[PageCell1Controller class],[PageCell1Controller class],[PageCell1Controller class]] onNavigationBar:YES];
             }
                 break;
             default:
             {
-                pageMenuController = [[XXPageMenuController alloc] initWithTitles:titles2 controllersClass:@[[PageCell1Controller class],[PageCell1Controller class],[PageCell1Controller class],[PageCell2Controller class]] onNavigationBar:NO];
+                pageMenuController = [[XXPageMenuController alloc] initWithTitles:titles2 controllersClass:@[[PageCell2Controller class],[PageCell2Controller class],[PageCell2Controller class],[PageCell2Controller class]] onNavigationBar:NO];
             }
                 break;
         }

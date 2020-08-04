@@ -14,17 +14,22 @@
 @property (nonatomic, strong) UIActivityIndicatorView *indicatorView;
 @end
 
-#define kNavAndStatus_Height ([[UIApplication sharedApplication] statusBarFrame].size.height + 44)
+//#define kNavAndStatus_Height ([[UIApplication sharedApplication] statusBarFrame].size.height + 44)
 
 @implementation PageCell2Controller
 
 -(void)viewDidLoad{
     [super viewDidLoad];
-    self.view.backgroundColor = [UIColor whiteColor];
+    self.view.backgroundColor = [UIColor brownColor];
 
-    [self addTableView];
+//    [self addTableView];
 }
-
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    if (!_tableView) {
+        [self addTableView];
+    }
+}
 -(UIView *)addHeaderView{
     UIImageView *header = [[UIImageView alloc] initWithFrame:(CGRect){{0, 0}, {self.view.bounds.size.width, 200}}];
     [header setImage:[UIImage imageNamed:@"bg"]];
@@ -36,7 +41,7 @@
 
 -(void)addTableView{
     CGRect frame = self.view.bounds;
-    frame.size.height = frame.size.height - kNavAndStatus_Height;
+//    frame.size.height = frame.size.height - kNavAndStatus_Height - 44;
     _tableView = [[UITableView alloc] initWithFrame:frame];
     _tableView.delegate = self;
     _tableView.dataSource = self;
@@ -63,7 +68,7 @@
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return 10;
+    return 20;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{

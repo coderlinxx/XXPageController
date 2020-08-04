@@ -26,9 +26,8 @@
     [titles enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         [controllers addObject:[PageCell1Controller new]];
     }];
-    XXPageMenuController *pageMenuController = [[XXPageMenuController alloc] initWithTitles:titles iconNames:iconNames controllers:controllers onNavigationBar:YES];
+    XXPageMenuController *pageMenuController = [[XXPageMenuController alloc] initWithTitles:titles iconNames:iconNames controllers:controllers onNavigationBar:NO];
     pageMenuController.lineColor = [UIColor orangeColor];
-    pageMenuController.titleFont = [UIFont systemFontOfSize:14 weight:UIFontWeightLight];
     pageMenuController.titleColor = [UIColor colorWithWhite:0.2 alpha:1];
     pageMenuController.titleSelectedColor = [UIColor blackColor];
     pageMenuController.pageBarBgColor = [UIColor whiteColor];
