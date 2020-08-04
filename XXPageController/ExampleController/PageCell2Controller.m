@@ -56,8 +56,8 @@
     
     [_indicatorView startAnimating];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [_indicatorView stopAnimating];
-        [self.view addSubview:_tableView];
+        [self->_indicatorView stopAnimating];
+        [self.view addSubview:self->_tableView];
     });
 
 }

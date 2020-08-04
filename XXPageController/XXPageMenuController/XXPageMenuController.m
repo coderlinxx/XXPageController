@@ -222,7 +222,7 @@ static NSString *mainCell = @"inxx_mainCell";
             } completion:^(BOOL finished) {
                 //缩放结束后重置transform, 并设置当前对应的字体大小. 这样就能避免transform从小到大时字体模糊
                 titleLabel.transform = CGAffineTransformIdentity;
-                [titleLabel setFont:(selected ? _titleSelectedFont : _titleFont)];
+                [titleLabel setFont:(selected ? self->_titleSelectedFont : self->_titleFont)];
             }];
         } else {
             [titleLabel setFont:(selected ? _titleSelectedFont : _titleFont)];
@@ -420,11 +420,11 @@ CGRect childFrame;
         [self updateLineFrameWithIndex:index] ;
     } completion:^(BOOL finished) {
         if (needReset) { //复位
-            _lineScrollType = lineScrollType;
-            _pageTitleFontChangeType = titleFontChangeType;
-            _pageTitleColorChangeType = titleColorChangeType;
+            self->_lineScrollType = lineScrollType;
+            self->_pageTitleFontChangeType = titleFontChangeType;
+            self->_pageTitleColorChangeType = titleColorChangeType;
         }
-        _didSelectCollectionPageItem = NO;
+        self->_didSelectCollectionPageItem = NO;
     }];
     
 
