@@ -16,7 +16,7 @@ Pod::Spec.new do |spec|
   #
 
   spec.name         = "XXPageController"
-  spec.version      = "0.0.4"
+  spec.version      = "0.0.5"
   spec.summary      = "分页加载控制器."
 
   spec.description  = <<-DESC
