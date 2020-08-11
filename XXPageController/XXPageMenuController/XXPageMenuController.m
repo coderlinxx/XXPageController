@@ -10,6 +10,7 @@
 
 #define kScreenWidth [[UIScreen mainScreen] bounds].size.width
 #define kScreenHeight [[UIScreen mainScreen] bounds].size.height
+#define kNavAndStatus_Height ([[UIApplication sharedApplication] statusBarFrame].size.height + 44)
 
 @interface PopEnabeldCollectionView : UICollectionView
 @end
@@ -235,6 +236,20 @@ static NSString *mainCell = @"inxx_mainCell";
 
 - (void)configProperties {
     
+    //edgesForExtendedLayout 边缘延伸属性，默认为UIRectEdgeAll.
+    //UIRectEdgeAll 当前视图控制器里各种UI控件会忽略导航栏和标签的存在，布局时若设置其原点设置为(0,0)，视图会延伸显示到导航栏的下面被覆盖；
+    //UIRectEdgeNone: 意味着子控件本身会自动躲避导航栏和标签栏，以免被遮挡。
+    self.edgesForExtendedLayout = UIRectEdgeNone;
+    if (self.parentViewController ) {
+        self.parentViewController.edgesForExtendedLayout = UIRectEdgeNone;
+    }
+    if (_originY) {
+           CGRect frame = self.view.frame;
+           frame.origin.y += _originY;
+           frame.size.height -= _originY;
+           self.view.frame = frame;
+    }
+
     //init default value
     _pageBarHeight = _onNavigationBar ? 44 : (_pageBarHeight ?: 44);
     _pageBarBgColor = _pageBarBgColor ? : [UIColor whiteColor];
@@ -248,7 +263,6 @@ static NSString *mainCell = @"inxx_mainCell";
     _titleColor = _titleColor ? : [UIColor colorWithWhite:0.1 alpha:1];
     _titleSelectedColor = _titleSelectedColor ?: [UIColor blackColor];
     _pageMenuW =  _onNavigationBar ? (kScreenWidth - 120) : kScreenWidth; //120为预估的左右navigationItem的总宽度
-    
     if (_pageCellWidthType == PageCellWidthTypeSplitScreen) {
         //根据titles.count平分宽度
         _pageCellW = (_titles.count <= _maxPagesCountInPageShowArea) ? _pageMenuW / _titles.count : _pageMenuW / _maxPagesCountInPageShowArea;
@@ -280,13 +294,13 @@ static NSString *mainCell = @"inxx_mainCell";
 }
 
 - (void)addScrollViewPage {
-    CGFloat navigationBarMaxY = CGRectGetMaxY(self.navigationController.navigationBar.frame);
-    CGFloat pageMenuY = _onNavigationBar ? 0 : navigationBarMaxY;
-    CGRect frame = CGRectMake(0, pageMenuY, _pageMenuW, _pageBarHeight);
+    
+    CGRect frame = CGRectMake(0, 0, _pageMenuW, _pageBarHeight);
     UIScrollView *scrollViewPage = [[UIScrollView alloc] initWithFrame:frame];
     scrollViewPage.showsVerticalScrollIndicator = NO;
     scrollViewPage.showsHorizontalScrollIndicator = NO;
     scrollViewPage.delegate = self;
+    
     if (_onNavigationBar) {
         scrollViewPage.backgroundColor = [UIColor clearColor];  //位于导航条时背景色处理为透明色,不公开属性
         if (self.parentViewController && ![self.parentViewController isKindOfClass:[UINavigationController class]]) {
@@ -340,7 +354,6 @@ static NSString *mainCell = @"inxx_mainCell";
     self.scrollViewPage = scrollViewPage;
 }
 
-
 - (void)addPageBottomLine {
     _line = [UIView new];
     _line.backgroundColor = _lineColor;
@@ -352,17 +365,13 @@ static NSString *mainCell = @"inxx_mainCell";
 
 CGRect childFrame;
 - (void)addCollectionMain {
-    
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
     layout.minimumLineSpacing = 0;
     layout.minimumInteritemSpacing = 0;
     layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-    
-    CGFloat navigationBarMaxY = CGRectGetMaxY(self.navigationController.navigationBar.frame);
-    CGFloat y = _onNavigationBar ? navigationBarMaxY : navigationBarMaxY + _pageBarHeight;
-    layout.itemSize = CGSizeMake(kScreenWidth, kScreenHeight - y);
+    CGFloat y = _onNavigationBar ? 0 : _pageBarHeight;
+    layout.itemSize = CGSizeMake(self.view.bounds.size.width, kScreenHeight - kNavAndStatus_Height - y - _originY);
     CGRect frame = CGRectMake(0, y, layout.itemSize.width, layout.itemSize.height);
-
     PopEnabeldCollectionView *collection = [[PopEnabeldCollectionView alloc] initWithFrame:frame collectionViewLayout:layout];
     collection.backgroundColor = [UIColor whiteColor];
     collection.dataSource = self;
@@ -378,8 +387,17 @@ CGRect childFrame;
     
     childFrame = frame;
     for (UIViewController *childVc in self.controllers) {
+        //子控制器的frame.origin.y肯定要从其自己的0开始
         childFrame.origin.y = 0;
         childVc.view.frame = childFrame;
+    }
+}
+
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    if (self.didLayoutSubviewsBlock) {
+        self.didLayoutSubviewsBlock(self.view, self.scrollViewPage, self.collectionMain);
     }
 }
 

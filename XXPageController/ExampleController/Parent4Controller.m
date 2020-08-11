@@ -13,6 +13,7 @@
 @interface Parent4Controller ()
 
 @end
+#define kScreenWidth [[UIScreen mainScreen] bounds].size.width
 
 @implementation Parent4Controller
 
@@ -20,6 +21,13 @@
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
     self.title = NSStringFromClass(self.class);
+
+    UIImageView *header = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, 100)];
+    [header setImage:[UIImage imageNamed:@"bg"]];
+    header.contentMode = UIViewContentModeScaleAspectFill;
+    header.clipsToBounds = YES;
+    [self.view addSubview:header];
+    
     NSArray *titles = @[@"新闻",@"体育",@"汽车",@"房产"];
     
     NSMutableArray *controllers = [NSMutableArray array];
@@ -34,12 +42,16 @@
     pageMenuController.pageBarBgColor = [UIColor whiteColor];
     pageMenuController.pageBarHeight = 44;
     pageMenuController.lineWidthType = LineWidthTypeStaticShort;
-    pageMenuController.lineScrollType = arc4random() % 2 + 1; //1,2随机 LineScrollTypeFinishedAnimation 或者 LineScrollTypeFinishedLinear;
-    
+    //pageMenuController.lineScrollType = arc4random() % 2 + 1; //1,2随机 LineScrollTypeFinishedAnimation 或者 LineScrollTypeFinishedLinear;
+    pageMenuController.defaultIndex = 1;
+    pageMenuController.originY = 100;
     //因为这里是将pageMenuController添加到ParentController(self类)上的,所以要为pageMenuController设置父视图控制器
     [pageMenuController setSuperViewController:self];
-    
-    pageMenuController.defaultIndex = 1;
+        
+    pageMenuController.didLayoutSubviewsBlock = ^(UIView *pageMenuControllerView, UIScrollView *scrollViewPage, UICollectionView *collectionMain) {
+        //do something
+    };
+
 }
 
 - (void)didReceiveMemoryWarning {
