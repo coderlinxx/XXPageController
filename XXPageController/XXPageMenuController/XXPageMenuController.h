@@ -109,6 +109,9 @@ typedef NS_ENUM(NSInteger, PageTitleColorChangeType) {
 /** 默认选择的 index 位置 ,默认值为0*/
 @property (nonatomic,assign) NSInteger defaultIndex;
 
+/** 分页控制器View视图的 Y 轴方向 自由设置起始位置(适用于分页条不在导航条上的情况) */
+@property (nonatomic, assign) CGFloat originY;
+
 /**
  创建分页控制器 : 自动创建全部控制器(方式一)
  
@@ -147,5 +150,8 @@ typedef NS_ENUM(NSInteger, PageTitleColorChangeType) {
  @param superVc 目标父视图控制器
  */
 - (void)setSuperViewController:(UIViewController *)superVc;
+
+/// 【自定义页面的frame】在界面viewDidLayoutSubviews/组件layoutSubviews后调用，让外界有机会修改frame等
+@property (nonatomic, copy) void (^didLayoutSubviewsBlock)(UIView *pageMenuControllerView, UIScrollView *scrollViewPage, UICollectionView *collectionMain);
 
 @end

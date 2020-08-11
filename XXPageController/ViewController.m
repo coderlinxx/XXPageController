@@ -21,7 +21,7 @@
 @property(nonatomic,strong)UIColor *color ;
 @end
 
-#define SCREEN_Width ([[UIScreen mainScreen] bounds].size.width)
+#define kScreenWidth [[UIScreen mainScreen] bounds].size.width
 
 @implementation ViewController
 
@@ -38,7 +38,7 @@
 }
 
 -(UIView *)addHeaderView{
-    UIImageView *header = [[UIImageView alloc] initWithFrame:CGRectMake(0, -64, SCREEN_Width, 200)];
+    UIImageView *header = [[UIImageView alloc] initWithFrame:CGRectMake(0, -64, kScreenWidth, 200)];
     [header setImage:[UIImage imageNamed:@"bg"]];
     header.contentMode = UIViewContentModeScaleAspectFill;
     header.clipsToBounds = YES;
@@ -56,7 +56,7 @@
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_Width, 30)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, 30)];
     label.backgroundColor = [UIColor colorWithWhite:0.8 alpha:0.5];
     label.font = [UIFont systemFontOfSize:12];
     label.textAlignment = NSTextAlignmentLeft;

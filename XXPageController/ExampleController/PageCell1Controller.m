@@ -22,7 +22,6 @@
 -(void)viewDidLoad{
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor yellowColor];
-    
 //    [self addTableView];
 }
 
@@ -59,7 +58,7 @@
     
     _tableView.delegate = self;
     _tableView.dataSource = self;
-    _tableView.tableHeaderView = [self addHeaderView];
+//    _tableView.tableHeaderView = [self addHeaderView];
     _tableView.tableFooterView = [[UIView alloc] init];
     [self.view addSubview:_tableView];
     _tableView.hidden = YES;
