@@ -16,22 +16,24 @@
 @end
 
 //#define kNavAndStatus_Height ([[UIApplication sharedApplication] statusBarFrame].size.height + 44)
-
+#define isIPhoneX (CGSizeEqualToSize(CGSizeMake(375.f, 812.f), [UIScreen mainScreen].bounds.size) || CGSizeEqualToSize(CGSizeMake(812.f, 375.f), [UIScreen mainScreen].bounds.size)) //是否是iphoneX
+//底部安全高度
+#define kBottom_Safe_Height (isIPhoneX ? 34 : 0)
 @implementation PageCell1Controller
 
 -(void)viewDidLoad{
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor yellowColor];
-//    [self addTableView];
+    [self addTableView];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     //当调用_childController.view.frame时，触发ChildViewController的-(void)viewDidLoad方法执行，但是这个时候_childController.view还没被添加在父视图上呢，所以坐标是被设置了，但是还没完成设置，也就是没有最终落地到实处。所以tableView去self.view.bounds还是取得默认的试图控制器的宽和高，默认的宽和高是屏幕的宽和高，所以导致了上述问题。
     //在 viewWillAppear/viewWillLayoutSubviews/viewDidLayoutSubviews 中 subview 的 frame 是准确的
-    if (!_tableView) {
-        [self addTableView];
-    }
+//    if (!_tableView) {
+//        [self addTableView];
+//    }
 
 }
 
@@ -39,17 +41,14 @@
     [super viewWillLayoutSubviews];
 //    _tableView.frame = self.view.bounds;
 //    _indicatorView.center = _tableView.center;
-
 }
 
--(UIView *)addHeaderView{
-    UIImageView *header = [[UIImageView alloc] initWithFrame:(CGRect){{0, 0}, {self.view.bounds.size.width, 200}}];
-    [header setImage:[UIImage imageNamed:@"bg"]];
-    header.contentMode = UIViewContentModeScaleAspectFill;
-    header.clipsToBounds = YES;
-    
-    return header;
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    _tableView.frame = self.view.frame;
+    _indicatorView.center = _tableView.center;
 }
+
 
 -(void)addTableView{
     CGRect frame = self.view.bounds;
@@ -58,13 +57,13 @@
     
     _tableView.delegate = self;
     _tableView.dataSource = self;
-//    _tableView.tableHeaderView = [self addHeaderView];
     _tableView.tableFooterView = [[UIView alloc] init];
     [self.view addSubview:_tableView];
     _tableView.hidden = YES;
-
+    
     _indicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     _indicatorView.hidesWhenStopped = YES;
+    _indicatorView.color = [UIColor redColor];
     _indicatorView.center = _tableView.center;
     [self.view addSubview:_indicatorView];
     
@@ -82,7 +81,7 @@
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return 20;
+    return 12;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{

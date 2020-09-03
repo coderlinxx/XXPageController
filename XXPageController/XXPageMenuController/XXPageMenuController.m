@@ -16,7 +16,7 @@
 @end
 @implementation PopEnabeldCollectionView
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-    //解决横向滚动的scrollView和系统pop手势返回冲突
+    //处理横向滚动的scrollView和系统pop手势返回冲突
     if ([otherGestureRecognizer.view isKindOfClass:NSClassFromString(@"UILayoutContainerView")] && otherGestureRecognizer.state == UIGestureRecognizerStateBegan && self.contentOffset.x == 0) return YES;
     return NO;
 }
@@ -41,15 +41,10 @@
         _titleLabel = [[UILabel alloc] initWithFrame:self.bounds];
         _titleLabel.textAlignment = NSTextAlignmentCenter;
         _titleLabel.lineBreakMode = NSLineBreakByCharWrapping;
-//        _titleLabel.backgroundColor = [UIColor greenColor];
         _titleLabel.userInteractionEnabled = YES;
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(titleClick)];
         [_titleLabel addGestureRecognizer:tap];
         [self addSubview:_titleLabel];
-        
-        
-        
-        
         
         _titleBtn = [[UIButton alloc] initWithFrame:self.bounds];
         _titleBtn.contentMode = UIViewContentModeCenter;
@@ -92,7 +87,7 @@
 @property (nonatomic, strong) NSMutableArray *pageCellWs;
 /** 分页工具条 cell 集合 */
 @property (nonatomic, strong) NSMutableArray *pageCells;
-@property (nonatomic, strong) NSArray *titles;
+@property (nonatomic, strong) NSArray <NSString *>*titles;
 @property (nonatomic, strong) NSArray *controllersClass;
 @property (nonatomic, strong) NSArray *controllers;
 @property (nonatomic, strong) NSArray *icons;
@@ -156,8 +151,21 @@ static NSString *mainCell = @"inxx_mainCell";
     [superVc.view addSubview:self.view];
 }
 
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.backgroundColor = [UIColor whiteColor];
+    [self configProperties];
+    [self addScrollViewPage];
+    [self addCollectionMain];
+    [self addPageBottomLine];
+    [self addObserver:self forKeyPath:@"selectedIndex" options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:nil];
+}
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    if (self.parentViewController ) {
+        self.parentViewController.edgesForExtendedLayout = UIRectEdgeNone;
+    }
     //1. 更新下划线的frame
     [self updateLineFrameWithIndex:self.selectedIndex];
     //2. 更新collection page的显示index 位置
@@ -174,30 +182,13 @@ static NSString *mainCell = @"inxx_mainCell";
     }
 }
 
-- (void)loadView {
-    [super loadView];
-    [self configProperties];
-    [self addScrollViewPage];
-    [self addCollectionMain];
-    [self addPageBottomLine];
-}
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.view.backgroundColor = [UIColor whiteColor];
-    [self addObserver:self forKeyPath:@"selectedIndex" options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:nil];
-}
-
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
     if ([keyPath isEqualToString:@"selectedIndex"]) {
         NSInteger oldIndex = [[change objectForKey:NSKeyValueChangeOldKey] integerValue];
         NSInteger newIndex = [[change objectForKey:NSKeyValueChangeNewKey] integerValue];
-        XXPageItemCell *oldCell = _pageCells[oldIndex];
-        XXPageItemCell *newCell = _pageCells[newIndex];
-        
         if (newIndex != oldIndex) {
-            [self reloadCollectionPageCell:oldCell index:oldIndex selected:NO];
-            [self reloadCollectionPageCell:newCell index:newIndex selected:YES];
+            [self reloadCollectionPageCell:_pageCells[oldIndex] index:oldIndex selected:NO];
+            [self reloadCollectionPageCell:_pageCells[newIndex] index:newIndex selected:YES];
         }
     }
 }
@@ -243,7 +234,7 @@ static NSString *mainCell = @"inxx_mainCell";
     if (self.parentViewController ) {
         self.parentViewController.edgesForExtendedLayout = UIRectEdgeNone;
     }
-    if (_originY) {
+    if (_originY != 0) {
            CGRect frame = self.view.frame;
            frame.origin.y += _originY;
            frame.size.height -= _originY;
@@ -324,8 +315,11 @@ static NSString *mainCell = @"inxx_mainCell";
     _pageCells = [NSMutableArray array];
 
     __block CGFloat currentX = 0;
-    [_pageCellWs enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        CGFloat pageCellW = [obj floatValue];
+    [self.titles enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        CGFloat pageCellW = _pageCellW;
+        if (_pageCellWidthType == PageCellWidthTypeByTitleLength) {
+            pageCellW = [self.pageCellWs[idx] floatValue];
+        }
         CGRect frame = CGRectMake(currentX, 0, pageCellW, _pageBarHeight);
         currentX += pageCellW;
         XXPageItemCell *pageItemCell = [[XXPageItemCell alloc] initWithFrame:frame];

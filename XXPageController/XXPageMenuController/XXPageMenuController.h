@@ -109,7 +109,7 @@ typedef NS_ENUM(NSInteger, PageTitleColorChangeType) {
 /** 默认选择的 index 位置 ,默认值为0*/
 @property (nonatomic,assign) NSInteger defaultIndex;
 
-/** 分页控制器View视图的 Y 轴方向 自由设置起始位置(适用于分页条不在导航条上的情况) */
+/** 分页控制器View视图的 Y 轴方向 设置初始位置(适用于分页条不在导航条上的情况) , 动态位置由于UICollectionViewCell 的复用存在不可知 bug, 暂不实现*/
 @property (nonatomic, assign) CGFloat originY;
 
 /**
